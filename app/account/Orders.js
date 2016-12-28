@@ -18,7 +18,14 @@ export default class Orders extends Component {
                 {key: '5', title: '退款'},
             ],
 
-            dataSource: ds.cloneWithRows([
+            dataSource1: ds.cloneWithRows([
+                {
+                    image: require('../../assets/images/creation/list_item.jpg'),
+                    desc: '苹果MacBook Pro 13.3英寸笔记本电脑 深空灰色(Core i5处理器/256G SSD闪存)',
+                    hasBeen: 10
+                }
+            ]),
+            dataSource2: ds.cloneWithRows([
                 {
                     image: require('../../assets/images/creation/list_item.jpg'),
                     desc: '苹果MacBook Pro 13.3英寸笔记本电脑 深空灰色(Core i5处理器/256G SSD闪存)',
@@ -78,15 +85,42 @@ export default class Orders extends Component {
             case '1':
                 return (
                     <View style={styles.container}>
-                        <View style={[styles.margin_top, , styles.backgound_white]}>
+                        <View style={[styles.margin_top, styles.backgound_white]}>
                             <View style={[styles.one_good, styles.border_top,
                                 styles.border_bottom, styles.padding_left_and_right]}>
                                 <Text style={styles.good_text1}>订单编号 201455667788</Text>
                                 <Text style={styles.good_text2}>交易完成</Text>
                             </View>
-                            <ListView dataSource={this.state.dataSource} enableEmptySections={true}
+                            <ListView dataSource={this.state.dataSource1} enableEmptySections={true}
                                       automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
-                                      renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}/>
+                                      renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                      renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+                            />
+                            <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
+                                <Text style={styles.item_footer_desc}>共1件宝贝,合计16元(含运费6元)</Text>
+                                <View style={styles.item_footer_btn}>
+                                    <Text style={styles.item_footer_btn_text}>评价</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.margin_top, styles.backgound_white]}>
+                            <View style={[styles.one_good, styles.border_top,
+                                styles.border_bottom, styles.padding_left_and_right]}>
+                                <Text style={styles.good_text1}>订单编号 201455667799</Text>
+                                <Text style={styles.good_text2}>待付款</Text>
+                            </View>
+                            <ListView dataSource={this.state.dataSource2} enableEmptySections={true}
+                                      automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
+                                      renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                      renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+
+                            />
+                            <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
+                                <Text style={styles.item_footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
+                                <View style={styles.item_footer_btn}>
+                                    <Text style={styles.item_footer_btn_text}>付款</Text>
+                                </View>
+                            </View>
                         </View>
                     </View>
                 );
@@ -124,9 +158,13 @@ export default class Orders extends Component {
             <TouchableHighlight onPress={this._gotoDetail.bind(this, rowData)}>
                 <View style={styles.item_box}>
                     <Image style={styles.item_thumb} source={rowData.image}/>
-                    <View>
-                        <Text>{rowData.desc}</Text>
-                        <Text>已参与{rowData.hasBeen}人次</Text>
+                    <View style={styles.item_box_text}>
+                        <View>
+                            <Text style={styles.item_box_desc} numberOfLines={1}>{rowData.desc}</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.item_box_has}>已参与{rowData.hasBeen}人次</Text>
+                        </View>
                     </View>
                 </View>
             </TouchableHighlight>
@@ -246,5 +284,49 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginLeft: 20,
         width: width - 40,
-    }
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    item_thumb: {
+        width: 100,
+        height: 55
+    },
+    item_box_text: {
+        flex: 1,
+        justifyContent: 'space-between'
+    },
+    item_box_desc: {
+        fontSize: 17,
+        fontWeight: '600',
+        padding: 3
+    },
+    item_box_has: {
+        color: '#666',
+        padding: 3
+    },
+    item_footer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    item_footer_desc: {
+        padding: 10,
+        fontSize: 15,
+        fontWeight: '400'
+    },
+    item_footer_btn: {
+        width: 80,
+        height: 30,
+        backgroundColor: '#aaa',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    item_footer_btn_text: {
+        fontSize: 16,
+        fontWeight: '600'
+    },
+    item_separator: {
+        height: 1,
+        backgroundColor: '#000',
+    },
 });

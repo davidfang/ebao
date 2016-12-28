@@ -1,6 +1,7 @@
-import {StyleSheet, View, Text, Dimensions, TouchableOpacity, ProgressViewIOS,
+import {StyleSheet, View, Text, Dimensions, TouchableOpacity,
     ListView, Image, TextInput, Modal, AlertIOS} from 'react-native';
 import React, {Component} from 'react';
+import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/Ionicons';
 import config from '../common/config';
 import request from '../common/request';
@@ -100,9 +101,7 @@ export default class Detail extends Component {
                         </Text>
                         <Text style={styles.item_text_font}>剩余人次:900</Text>
                     </View>
-                    <ProgressViewIOS style={[styles.item_progress, styles.item_desc_margin]}
-                                     progressTintColor="red"
-                                     progress={this._getProgress(0.2)}/>
+                    <Progress.Bar style={styles.item_desc_margin} progress={0.1} height={3} width={355} color={'#ee735c'}/>
                 </View>
                 <View style={styles.item_comments}>
                     <View style={[styles.item_box, styles.item_border_center]}>

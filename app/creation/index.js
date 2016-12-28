@@ -1,8 +1,8 @@
-import {View, Text, Image, ListView, TouchableHighlight, ProgressViewIOS,
-    Navigator, StyleSheet, Dimensions} from "react-native";
+import {View, Text, Image, ListView, TouchableHighlight, Navigator, StyleSheet, Dimensions} from "react-native";
 import React, {Component} from "react";
 import {TabViewAnimated, TabBarTop} from "react-native-tab-view";
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as Progress from 'react-native-progress';
 import Mock from 'mockjs';
 
 import Detail from './Detail';
@@ -111,8 +111,7 @@ export default class Home extends Component {
                                 苹果MacBook Pro 13.3英寸笔记本电脑 深空灰色(Core i5处理器/256G SSD闪存)
                             </Text>
                             <Text style={[styles.item_total, styles.item_text_font, styles.item_desc_margin]}>总需:1000人次</Text>
-                            <ProgressViewIOS style={[styles.item_progress, styles.item_desc_margin]} progressTintColor="red"
-                                             progress={this._getProgress(0.2)}/>
+                            <Progress.Bar style={styles.item_desc_margin} progress={0.3} height={3} width={214} color={'#ee735c'}/>
                             <View style={[styles.item_state, styles.item_desc_margin]}>
                                 <Text style={styles.item_text_font}>已参与人次:100</Text>
                                 <Text style={styles.item_remain}>剩余人次:900</Text>
