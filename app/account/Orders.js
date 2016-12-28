@@ -4,6 +4,8 @@ import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {TabViewAnimated, TabBarTop} from "react-native-tab-view";
 
+import Detail from '../creation/Detail';
+
 export default class Orders extends Component {
     constructor(props) {
         super(props);
@@ -127,25 +129,97 @@ export default class Orders extends Component {
             case '2':
                 return (
                     <View style={styles.container}>
-                        <Text>2</Text>
+                        <View style={[styles.margin_top, styles.backgound_white]}>
+                            <View style={[styles.one_good, styles.border_top,
+                                styles.border_bottom, styles.padding_left_and_right]}>
+                                <Text style={styles.good_text1}>订单编号 201455667799</Text>
+                                <Text style={styles.good_text2}>待付款</Text>
+                            </View>
+                            <ListView dataSource={this.state.dataSource2} enableEmptySections={true}
+                                      automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
+                                      renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                      renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+
+                            />
+                            <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
+                                <Text style={styles.item_footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
+                                <View style={styles.item_footer_btn}>
+                                    <Text style={styles.item_footer_btn_text}>付款</Text>
+                                </View>
+                            </View>
+                        </View>
                     </View>
                 );
             case '3':
                 return (
                     <View style={styles.container}>
-                        <Text>3</Text>
+                        <View style={[styles.margin_top, styles.backgound_white]}>
+                            <View style={[styles.one_good, styles.border_top,
+                                styles.border_bottom, styles.padding_left_and_right]}>
+                                <Text style={styles.good_text1}>订单编号 201455667799</Text>
+                                <Text style={styles.good_text2}>待付款</Text>
+                            </View>
+                            <ListView dataSource={this.state.dataSource2} enableEmptySections={true}
+                                      automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
+                                      renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                      renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+
+                            />
+                            <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
+                                <Text style={styles.item_footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
+                                <View style={styles.item_footer_btn}>
+                                    <Text style={styles.item_footer_btn_text}>收货</Text>
+                                </View>
+                            </View>
+                        </View>
                     </View>
                 );
             case '4':
                 return (
                     <View style={styles.container}>
-                        <Text>4</Text>
+                        <View style={[styles.margin_top, styles.backgound_white]}>
+                            <View style={[styles.one_good, styles.border_top,
+                                styles.border_bottom, styles.padding_left_and_right]}>
+                                <Text style={styles.good_text1}>订单编号 201455667799</Text>
+                                <Text style={styles.good_text2}>待付款</Text>
+                            </View>
+                            <ListView dataSource={this.state.dataSource2} enableEmptySections={true}
+                                      automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
+                                      renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                      renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+
+                            />
+                            <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
+                                <Text style={styles.item_footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
+                                <View style={styles.item_footer_btn}>
+                                    <Text style={styles.item_footer_btn_text}>评价</Text>
+                                </View>
+                            </View>
+                        </View>
                     </View>
                 );
             case '5':
                 return (
                     <View style={styles.container}>
-                        <Text>5</Text>
+                        <View style={[styles.margin_top, styles.backgound_white]}>
+                            <View style={[styles.one_good, styles.border_top,
+                                styles.border_bottom, styles.padding_left_and_right]}>
+                                <Text style={styles.good_text1}>订单编号 201455667799</Text>
+                                <Text style={styles.good_text2}>待付款</Text>
+                            </View>
+                            <ListView dataSource={this.state.dataSource2} enableEmptySections={true}
+                                      automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
+                                      renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                      renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+
+                            />
+                            <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
+                                <Text style={styles.item_footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
+                                <View style={styles.item_footer_btn}>
+                                    <Text style={styles.item_footer_btn_text}>退款</Text>
+                                </View>
+                            </View>
+                        </View>
                     </View>
                 );
             default:
@@ -187,7 +261,23 @@ export default class Orders extends Component {
     _gotoDetail(rowData) {
         const {navigator} = this.props;
         if (navigator) {
-
+            navigator.push({
+                name: 'detail',
+                component: Detail,
+                params: {
+                    //TODO: 数据都是假的,真实场景下,应该是Good表带出相关信息
+                    data: {
+                        "title":"信象然争江点强上传导细每内好强克下。委年但类土器门题化家员音些。共金四际强立般都一位以体在标料次。",
+                        "_id":"220000200801184370",
+                        "video":"http://video.iblack7.com/video_hcwijdwneqantgb4yqgx.mp4",
+                        "author": {
+                            "avatar":"http://dummyimage.com/640X640/86f279)",
+                            "nickname":"Jason White"
+                        },
+                        "thumb":"http://dummyimage.com/1280x720/f279a9)"
+                    }
+                }
+            });
         }
     }
 }
@@ -283,6 +373,7 @@ const styles = StyleSheet.create({
     item_box: {
         marginTop: 10,
         marginLeft: 20,
+        paddingBottom: 10,
         width: width - 40,
         flexDirection: 'row',
         alignItems: 'center',

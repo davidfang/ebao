@@ -34,6 +34,7 @@ export default class Detail extends Component {
 
     render() {
         let data = this.props.data;
+
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
@@ -213,12 +214,12 @@ export default class Detail extends Component {
             let url = config.api.base + config.api.comment;
             request.post(url, body).then(function (data) {
                 if (data && data.success) {
-                    //更新列表
+                    //TODO:更新列表
 
                     me.setState({
                         isSending: false,
                         content: ''
-                        //还有其他值需要设置
+                        //TODO:还有其他值需要设置
                     });
 
                     me._setModelVisible(false);
@@ -227,7 +228,7 @@ export default class Detail extends Component {
                 console.log(error);
                 me.setState({
                     isSending: false
-                    //还有其他值需要设置
+                    //TODO:还有其他值需要设置
                 });
                 me._setModelVisible(false);
                 AlertIOS.alert('留言失败,请稍后重试!');
