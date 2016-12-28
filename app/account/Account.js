@@ -2,6 +2,7 @@ import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import React, {Component} from 'react';
 
 import Orders from './Orders';
+import Unused from './Unused';
 
 export default class Account extends Component {
     render() {
@@ -25,12 +26,12 @@ export default class Account extends Component {
                     <View style={[styles.margin_top, styles.my_item, styles.backgound_white, styles.border_top,
                         styles.border_bottom, styles.padding_left_and_right]}>
                         <Text style={styles.my_item_text1}>我的订单</Text>
-                        <Text style={styles.my_item_text2} onPress={this._gotoView.bind(this)}>查看</Text>
+                        <Text style={styles.my_item_text2} onPress={this._gotoView.bind(this, 'orders')}>查看</Text>
                     </View>
                     <View style={[styles.my_item, styles.backgound_white, styles.border_bottom,
                         styles.padding_left_and_right]}>
                         <Text style={styles.my_item_text1}>我的闲置</Text>
-                        <Text style={styles.my_item_text2}>查看</Text>
+                        <Text style={styles.my_item_text2} onPress={this._gotoView.bind(this, 'unused')}>查看</Text>
                     </View>
                     <View style={[styles.my_item, styles.backgound_white, styles.border_bottom,
                         styles.padding_left_and_right]}>
@@ -52,12 +53,25 @@ export default class Account extends Component {
         );
     }
 
-    _gotoView() {
+    _gotoView(type) {
         const {navigator} = this.props;
+
         if (navigator) {
+            let component = null;
+
+            switch (type) {
+                case 'orders':
+                    component = Orders;
+                    break;
+                case 'unused':
+                    component = Unused;
+                    break;
+
+            }
+
             navigator.push({
-                name: 'orders',
-                component: Orders
+                name: type,
+                component: component
             });
         }
     }
