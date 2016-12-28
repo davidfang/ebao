@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
 import {StyleSheet, Dimensions, View, Text, ListView, Image, TouchableHighlight} from 'react-native';
+import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Mock from 'mockjs';
 

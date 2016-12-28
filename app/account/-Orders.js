@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
 import {Text, View, TouchableOpacity, TouchableHighlight, ListView, Image, StyleSheet, Dimensions} from 'react-native';
+import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {TabViewAnimated, TabBarTop} from "react-native-tab-view";
 

@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import React, {Component} from 'react';
 
 import Orders from './Orders';
 

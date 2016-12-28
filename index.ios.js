@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
 import {AppRegistry, StyleSheet, AsyncStorage, View, Text,
     TabBarIOS, Navigator, ActivityIndicator, Dimensions} from 'react-native';
+import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import Home from './app/creation/index';

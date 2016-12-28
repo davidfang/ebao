@@ -1,6 +1,6 @@
-import React, {Component} from "react";
 import {View, Text, Image, ListView, TouchableHighlight, ProgressViewIOS,
     Navigator, StyleSheet, Dimensions} from "react-native";
+import React, {Component} from "react";
 import {TabViewAnimated, TabBarTop} from "react-native-tab-view";
 import Icon from 'react-native-vector-icons/Ionicons';
 import Mock from 'mockjs';

@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
 import {StyleSheet, View, Text, Dimensions, TouchableOpacity, ProgressViewIOS,
     ListView, Image, TextInput, Modal, AlertIOS} from 'react-native';
+import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import config from '../common/config';
 import request from '../common/request';

@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
 import {StyleSheet, AsyncStorage, Dimensions, View, Text, TextInput, AlertIOS} from 'react-native';
+import React, {Component} from 'react';
 import Button from 'react-native-button';
 var CountDown = require('react-native-sk-countdown').CountDownText;
 

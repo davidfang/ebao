@@ -1,5 +1,5 @@
-import React, {Component} from "react";
 import {View, Text, Image, Navigator, StyleSheet, Dimensions} from "react-native";
+import React, {Component} from "react";
 import {TabViewAnimated, TabBarTop} from "react-native-tab-view";
 import List from "./List";
 
