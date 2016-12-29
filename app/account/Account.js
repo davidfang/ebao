@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 
 import Orders from './Orders';
 import Unused from './Unused';
+import Mark from './Mark';
 
 export default class Account extends Component {
     render() {
@@ -36,7 +37,7 @@ export default class Account extends Component {
                     <View style={[styles.my_item, styles.backgound_white, styles.border_bottom,
                         styles.padding_left_and_right]}>
                         <Text style={styles.my_item_text1}>我的收藏</Text>
-                        <Text style={styles.my_item_text2}>查看</Text>
+                        <Text style={styles.my_item_text2} onPress={this._gotoView.bind(this, 'mark')}>查看</Text>
                     </View>
                     <View style={[styles.margin_top, styles.my_item, styles.backgound_white, styles.border_top,
                         styles.border_bottom, styles.padding_left_and_right]}>
@@ -65,6 +66,9 @@ export default class Account extends Component {
                     break;
                 case 'unused':
                     component = Unused;
+                    break;
+                case 'mark':
+                    component = Mark;
                     break;
 
             }

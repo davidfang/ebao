@@ -69,7 +69,7 @@ export default class ebao extends Component {
                                         selectedTab: 'publish'
                                     });
                                  }}>
-                    <Account/>
+                    <Edit/>
                 </Icon.TabBarItem>
                 <Icon.TabBarItem iconName="ios-recording-outline" selectedIconName="ios-recording" title="消息"
                                  selected={this.state.selectedTab === 'message'}
