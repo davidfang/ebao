@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import Home from './app/creation/index';
 import Edit from './app/edit/Edit';
-import Account from './app/account/Account';
+import Account from './app/account/index';
 import Login from './app/account/Login';
 import Slider from './app/account/Slider';
 
