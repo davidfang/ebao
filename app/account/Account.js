@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, ListView, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {TabViewAnimated, TabBarTop} from "react-native-tab-view";
@@ -6,13 +6,53 @@ import {TabViewAnimated, TabBarTop} from "react-native-tab-view";
 export default class Account extends Component {
     constructor(props) {
         super(props);
+        let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
         this.state = {
             index: 0,
             routes: [
                 {key: '1', title: '去部'},
                 {key: '2', title: '积分获取记录'},
                 {key: '3', title: '积分消费记录'}
-            ]
+            ],
+
+            dataSource: ds.cloneWithRows([
+                {
+                    type: '积分充值',
+                    time: '2016-11-11 15:52:29',
+                    count: 10
+                },
+                {
+                    type: '卖出闲置',
+                    time: '2016-11-12 15:52:29',
+                    count: 10
+                },
+                {
+                    type: '积分充值',
+                    time: '2016-11-13 15:52:29',
+                    count: 10
+                },
+                {
+                    type: '卖出闲置',
+                    time: '2016-11-12 15:52:29',
+                    count: 10
+                },
+                {
+                    type: '积分充值',
+                    time: '2016-11-13 15:52:29',
+                    count: 10
+                },
+                {
+                    type: '卖出闲置',
+                    time: '2016-11-12 15:52:29',
+                    count: 10
+                },
+                {
+                    type: '积分充值',
+                    time: '2016-11-13 15:52:29',
+                    count: 10
+                }
+            ])
         }
     }
 
@@ -61,7 +101,11 @@ export default class Account extends Component {
             case '1':
                 return (
                     <View style={styles.container}>
-                        <Text>1</Text>
+                        <ListView dataSource={this.state.dataSource} enableEmptySections={true}
+                                  automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
+                                  renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                  renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+                        />
                     </View>
                 );
             case '2':
@@ -79,6 +123,14 @@ export default class Account extends Component {
             default:
                 return null;
         }
+    }
+
+    _renderItem(rowData, rowID) {
+        return (
+            <View>
+                <Text>1245345345</Text>
+            </View>
+        );
     }
 
     _handleChangeTab = (index) => {
@@ -185,5 +237,9 @@ const styles = StyleSheet.create({
     },
     coin_info: {
         marginBottom: 48,
+    },
+    item_separator: {
+        height: 1,
+        backgroundColor: '#000',
     }
 });
