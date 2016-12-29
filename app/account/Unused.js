@@ -224,7 +224,7 @@ export default class Orders extends Component {
 
     _renderItem(rowData, rowID) {
         return (
-            <TouchableHighlight onPress={this._gotoDetail.bind(this, rowData)}>
+            <TouchableHighlight onPress={this._gotoDetail.bind(this, rowData)} underlayColor="#fff">
                 <View style={styles.item_box}>
                     <Image style={styles.item_thumb} source={rowData.image}/>
                     <View style={styles.item_box_text}>

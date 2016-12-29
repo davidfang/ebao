@@ -100,7 +100,7 @@ export default class Home extends Component {
 
     _renderItem(rowData, rowID) {
         return (
-            <TouchableHighlight onPress={this._gotoDetail.bind(this, rowData)}>
+            <TouchableHighlight onPress={this._gotoDetail.bind(this, rowData)} underlayColor="#fff">
                 <View style={styles.item}>
                     <View style={styles.item_main}>
                         <View style={styles.item_image_container}>
