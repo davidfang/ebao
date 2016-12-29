@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import Home from './app/creation/index';
 import Edit from './app/edit/Edit';
-import Account from './app/account/index';
+import Mine from './app/account/index';
 import Login from './app/account/Login';
 import Slider from './app/account/Slider';
 
@@ -81,14 +81,14 @@ export default class ebao extends Component {
                     <Edit/>
                 </Icon.TabBarItem>
                 <Icon.TabBarItem iconName="ios-person-outline" selectedIconName="ios-person" title="我的"
-                                 selected={this.state.selectedTab === 'accout'}
+                                 selected={this.state.selectedTab === 'mine'}
                                  onPress={() => {
                                     this.setState({
-                                        selectedTab: 'accout'
+                                        selectedTab: 'mine'
                                     });
                                  }}>
                     <Navigator
-                        initialRoute={{ name: 'account', component: Account }}
+                        initialRoute={{ name: 'account', component: Mine }}
                         configureScene={(route) => {
                                 return Navigator.SceneConfigs.FloatFromRight;
                             }}
