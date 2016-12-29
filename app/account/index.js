@@ -1,6 +1,7 @@
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import React, {Component} from 'react';
 
+import MyDetail from './MyDetail';
 import Orders from './Orders';
 import Unused from './Unused';
 import Mark from './Mark';
@@ -23,7 +24,7 @@ export default class Mine extends Component {
                             <Text style={styles.my_name_number}>编号:zhangsan001</Text>
                         </View>
                         <View style={styles.my_edit}>
-                            <Text style={styles.my_edit_text}>编辑</Text>
+                            <Text style={styles.my_edit_text} onPress={this._gotoView.bind(this, 'detail')}>编辑</Text>
                         </View>
                     </View>
                     <View style={[styles.margin_top, styles.my_item, styles.backgound_white, styles.border_top,
@@ -63,6 +64,9 @@ export default class Mine extends Component {
             let component = null;
 
             switch (type) {
+                case 'detail':
+                    component = MyDetail;
+                    break;
                 case 'orders':
                     component = Orders;
                     break;

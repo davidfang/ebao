@@ -21,7 +21,8 @@
     "react-native-swiper": "^1.5.4",
     "react-native-tab-view": "0.0.42",
     "react-native-vector-icons": "^2.0.2",
-    "react-native-video": "^0.9.0"
+    "react-native-video": "^0.9.0",
+    "react-timer-mixin": "^0.13.3"
   },
   "devDependencies": {
     "babel-jest": "18.0.0",
