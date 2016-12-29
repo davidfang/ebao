@@ -25,7 +25,7 @@ export default class Account extends Component {
                 {
                     type: '卖出闲置',
                     time: '2016-11-12 15:52:29',
-                    count: 10
+                    count: 100
                 },
                 {
                     type: '积分充值',
@@ -35,12 +35,12 @@ export default class Account extends Component {
                 {
                     type: '卖出闲置',
                     time: '2016-11-12 15:52:29',
-                    count: 10
+                    count: 100
                 },
                 {
                     type: '积分充值',
                     time: '2016-11-13 15:52:29',
-                    count: 10
+                    count: 100
                 },
                 {
                     type: '卖出闲置',
@@ -50,7 +50,7 @@ export default class Account extends Component {
                 {
                     type: '积分充值',
                     time: '2016-11-13 15:52:29',
-                    count: 10
+                    count: 100
                 }
             ])
         }
@@ -111,13 +111,21 @@ export default class Account extends Component {
             case '2':
                 return (
                     <View style={styles.container}>
-                        <Text>2</Text>
+                        <ListView dataSource={this.state.dataSource} enableEmptySections={true}
+                                  automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
+                                  renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                  renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+                        />
                     </View>
                 );
             case '3':
                 return (
                     <View style={styles.container}>
-                        <Text>3</Text>
+                        <ListView dataSource={this.state.dataSource} enableEmptySections={true}
+                                  automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
+                                  renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                  renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+                        />
                     </View>
                 );
             default:
@@ -127,8 +135,14 @@ export default class Account extends Component {
 
     _renderItem(rowData, rowID) {
         return (
-            <View>
-                <Text>1245345345</Text>
+            <View style={styles.item_container}>
+                <View>
+                    <Text style={styles.item_type}>{rowData.type}</Text>
+                    <Text style={styles.item_time}>{rowData.time}</Text>
+                </View>
+                <View>
+                    <Text style={styles.item_count}>{rowData.count}</Text>
+                </View>
             </View>
         );
     }
@@ -241,5 +255,24 @@ const styles = StyleSheet.create({
     item_separator: {
         height: 1,
         backgroundColor: '#000',
+    },
+    item_container: {
+        backgroundColor: '#fff',
+        flexDirection: 'row',
+        padding: 10,
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    item_type: {
+        fontSize: 16,
+        marginBottom: 2
+    },
+    item_time: {
+        color: '#666',
+        fontSize: 15
+    },
+    item_count: {
+        color: '#ee735c',
+        fontSize: 15
     }
 });
