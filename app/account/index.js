@@ -4,8 +4,9 @@ import React, {Component} from 'react';
 import Orders from './Orders';
 import Unused from './Unused';
 import Mark from './Mark';
+import Account from './Account';
 
-export default class Account extends Component {
+export default class Mine extends Component {
     render() {
         return (
             <View style={styles.container}>
@@ -42,7 +43,7 @@ export default class Account extends Component {
                     <View style={[styles.margin_top, styles.my_item, styles.backgound_white, styles.border_top,
                         styles.border_bottom, styles.padding_left_and_right]}>
                         <Text style={styles.my_item_text1}>我的账户</Text>
-                        <Text style={styles.my_item_text2}>查看</Text>
+                        <Text style={styles.my_item_text2} onPress={this._gotoView.bind(this, 'account')}>查看</Text>
                     </View>
                     <View style={[styles.margin_top, styles.my_item, styles.backgound_white, styles.border_top,
                         styles.border_bottom, styles.padding_left_and_right]}>
@@ -70,7 +71,11 @@ export default class Account extends Component {
                 case 'mark':
                     component = Mark;
                     break;
-
+                case 'account':
+                    component = Account;
+                    break;
+                default:
+                    break;
             }
 
             navigator.push({
