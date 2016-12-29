@@ -1,6 +1,7 @@
 import {View, Text, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Button from 'react-native-button';
 
 export default class Settings extends Component {
     render() {
@@ -36,9 +37,8 @@ export default class Settings extends Component {
                         <Text style={styles.new_message_text1}>清除缓存</Text>
                         <Text style={styles.new_message_text2}>清除</Text>
                     </View>
-                    <View style={[styles.body_item, styles.backgound_white, styles.border_top, styles.border_bottom,
-                        styles.padding_left_and_right, styles.margin_top]}>
-                        <Text style={styles.new_message_text1}>退出登录</Text>
+                    <View>
+                        <Button style={styles.logout_btn}>退出登录</Button>
                     </View>
                 </View>
             </View>
@@ -126,4 +126,18 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#666'
     },
+    logout_btn: {
+        width: width - 20,
+        marginLeft: 10,
+        padding: 15,
+        marginTop: 15,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#ee735c',
+        borderRadius: 4,
+        color: '#ee735c',
+        fontSize: 18,
+        backgroundColor: '#ffffff',
+        overflow:'hidden'
+    }
 });

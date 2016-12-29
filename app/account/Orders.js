@@ -2,6 +2,7 @@ import {Text, View, TouchableOpacity, TouchableHighlight, ListView, Image, Style
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {TabViewAnimated, TabBarTop} from "react-native-tab-view";
+import Button from 'react-native-button';
 
 import Detail from '../creation/Detail';
 
@@ -99,8 +100,8 @@ export default class Orders extends Component {
                             />
                             <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
                                 <Text style={styles.item_footer_desc}>共1件宝贝,合计16元(含运费6元)</Text>
-                                <View style={styles.item_footer_btn}>
-                                    <Text style={styles.item_footer_btn_text}>评价</Text>
+                                <View>
+                                    <Button style={styles.item_footer_btn}>评价</Button>
                                 </View>
                             </View>
                         </View>
@@ -118,8 +119,8 @@ export default class Orders extends Component {
                             />
                             <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
                                 <Text style={styles.item_footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
-                                <View style={styles.item_footer_btn}>
-                                    <Text style={styles.item_footer_btn_text}>付款</Text>
+                                <View>
+                                    <Button style={styles.item_footer_btn}>待付款</Button>
                                 </View>
                             </View>
                         </View>
@@ -142,8 +143,8 @@ export default class Orders extends Component {
                             />
                             <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
                                 <Text style={styles.item_footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
-                                <View style={styles.item_footer_btn}>
-                                    <Text style={styles.item_footer_btn_text}>付款</Text>
+                                <View>
+                                    <Button style={styles.item_footer_btn}>付款</Button>
                                 </View>
                             </View>
                         </View>
@@ -166,8 +167,8 @@ export default class Orders extends Component {
                             />
                             <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
                                 <Text style={styles.item_footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
-                                <View style={styles.item_footer_btn}>
-                                    <Text style={styles.item_footer_btn_text}>收货</Text>
+                                <View>
+                                    <Button style={styles.item_footer_btn}>收货</Button>
                                 </View>
                             </View>
                         </View>
@@ -190,8 +191,8 @@ export default class Orders extends Component {
                             />
                             <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
                                 <Text style={styles.item_footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
-                                <View style={styles.item_footer_btn}>
-                                    <Text style={styles.item_footer_btn_text}>评价</Text>
+                                <View>
+                                    <Button style={styles.item_footer_btn}>评价</Button>
                                 </View>
                             </View>
                         </View>
@@ -214,8 +215,8 @@ export default class Orders extends Component {
                             />
                             <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
                                 <Text style={styles.item_footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
-                                <View style={styles.item_footer_btn}>
-                                    <Text style={styles.item_footer_btn_text}>退款</Text>
+                                <View>
+                                    <Button style={styles.item_footer_btn}>退款</Button>
                                 </View>
                             </View>
                         </View>
@@ -407,13 +408,14 @@ const styles = StyleSheet.create({
     item_footer_btn: {
         width: 80,
         height: 30,
+        lineHeight: 30,
         backgroundColor: '#aaa',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    item_footer_btn_text: {
-        fontSize: 16,
-        fontWeight: '600'
+        borderWidth: 1,
+        borderColor: '#ee735c',
+        borderRadius: 4,
+        color: '#ee735c',
+        backgroundColor: '#ffffff',
+        overflow:'hidden'
     },
     item_separator: {
         height: 1,
