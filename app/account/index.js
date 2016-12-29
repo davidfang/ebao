@@ -5,6 +5,7 @@ import Orders from './Orders';
 import Unused from './Unused';
 import Mark from './Mark';
 import Account from './Account';
+import Settings from './Settings';
 
 export default class Mine extends Component {
     render() {
@@ -48,7 +49,7 @@ export default class Mine extends Component {
                     <View style={[styles.margin_top, styles.my_item, styles.backgound_white, styles.border_top,
                         styles.border_bottom, styles.padding_left_and_right]}>
                         <Text style={styles.my_item_text1}>设置</Text>
-                        <Text style={styles.my_item_text2}>查看</Text>
+                        <Text style={styles.my_item_text2} onPress={this._gotoView.bind(this, 'settings')}>查看</Text>
                     </View>
                 </View>
             </View>
@@ -73,6 +74,9 @@ export default class Mine extends Component {
                     break;
                 case 'account':
                     component = Account;
+                    break;
+                case 'settings':
+                    component = Settings;
                     break;
                 default:
                     break;
