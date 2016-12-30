@@ -64,7 +64,9 @@ export default class Home extends Component {
                     <View style={styles.container, {marginBottom: 50}}>
                         <ListView dataSource={this.state.dataSource} enableEmptySections={true}
                                   automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
-                                  renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}/>
+                                  renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                  renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+                        />
                     </View>
                 );
             case '2':
@@ -72,7 +74,9 @@ export default class Home extends Component {
                     <View style={styles.container}>
                         <ListView dataSource={this.state.dataSource} enableEmptySections={true}
                                   automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
-                                  renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}/>
+                                  renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                  renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+                        />
                     </View>
                 );
             case '3':
@@ -80,7 +84,9 @@ export default class Home extends Component {
                     <View style={styles.container}>
                         <ListView dataSource={this.state.dataSource} enableEmptySections={true}
                                   automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
-                                  renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}/>
+                                  renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                  renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+                        />
                     </View>
                 );
             default:
@@ -118,7 +124,6 @@ export default class Home extends Component {
                             </View>
                         </View>
                     </View>
-                    <View style={styles.item_seperator}></View>
                 </View>
             </TouchableHighlight>
         );
@@ -232,11 +237,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    item_seperator: {
-        width: width - 10,
-        height: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-        marginLeft: 5
+    item_separator: {
+        height: 1,
+        backgroundColor: '#000',
     }
 });
