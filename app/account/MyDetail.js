@@ -5,6 +5,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import PickerAlert from '../components/PickerAlert';
 import PickerWidget from '../components/PickerWidget';
 
+import AddressList from './AddressList';
+
 export default class MyDetail extends Component {
     constructor(props) {
         super(props);
@@ -49,7 +51,7 @@ export default class MyDetail extends Component {
                     </View>
                     <View style={[styles.body_item, styles.backgound_white, styles.border_bottom, styles.padding_left_and_right]}>
                         <Text style={styles.body_item_text1}>收货地址</Text>
-                        <Text style={styles.body_item_text2}>查看</Text>
+                        <Text style={styles.body_item_text2} onPress={this._gotoView.bind(this)}>查看</Text>
                     </View>
                 </View>
                 <PickerAlert ref="sex_picker" options={['男', '女']}/>
@@ -78,6 +80,17 @@ export default class MyDetail extends Component {
 
     _avatarPick() {
         this.refs['avatar_picker'].show('设置头像', '拍摄', '从相册选择', this);
+    }
+
+    _gotoView() {
+        const {navigator} = this.props;
+
+        if (navigator) {
+            navigator.push({
+                name: 'addressList',
+                component: AddressList
+            });
+        }
     }
 }
 
