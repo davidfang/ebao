@@ -67,7 +67,7 @@ export default class Detail extends Component {
                               style={styles.modal_close_icon} />
                         <View style={styles.comments_box}>
                             <View style={styles.comments_item}>
-                                <TextInput placeholder="敢不敢评论一个!"
+                                <TextInput placeholder="敢不敢留一个!"
                                            style={styles.comments_item_content}
                                            multiline={true}
                                            onChangeText={(text) => this.setState({
@@ -77,7 +77,7 @@ export default class Detail extends Component {
                             </View>
                         </View>
                         <Button style={styles.submit_button} onPress={this._submit.bind(this)}>
-                            提交评论
+                            提交留言
                         </Button>
                     </View>
                 </Modal>
@@ -109,12 +109,12 @@ export default class Detail extends Component {
                         <Icon style={[styles.item_icon, this.state.isLike ? styles.item_like_color : null]}
                               size={28} name={this.state.isLike ? "ios-heart" : "ios-heart-outline"}
                               onPress={this._like.bind(this, true)}/>
-                        <Text style={styles.item_text} onPress={this._like.bind(this, true)}>喜欢</Text>
+                        <Text style={styles.item_text} onPress={this._like.bind(this, true)}>收藏</Text>
                     </View>
                     <View style={styles.item_box}>
                         <Icon style={styles.item_icon} name="ios-chatboxes-outline" size={28}
                               onPress={this._focus.bind(this, true)}/>
-                        <Text style={styles.item_text} onPress={this._focus.bind(this, true)}>评论</Text>
+                        <Text style={styles.item_text} onPress={this._focus.bind(this, true)}>留言</Text>
                     </View>
                 </View>
                 <View style={styles.comments_area}>
