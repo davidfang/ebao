@@ -3,6 +3,8 @@ import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
 
+import PickerWidget from '../components/PickerWidget';
+
 export default class Address extends Component {
     constructor(props) {
         super(props);
@@ -56,6 +58,7 @@ export default class Address extends Component {
                               renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
                     />
                 </View>
+                <PickerWidget ref="delete_picker"/>
             </View>
         );
     }
@@ -85,7 +88,7 @@ export default class Address extends Component {
                         </View>
                         <View style={styles.item_ed_box}>
                             <Text style={styles.item_ed_text}>编辑</Text>
-                            <Text style={styles.item_ed_text}>删除</Text>
+                            <Text style={styles.item_ed_text} onPress={this._delete.bind(this)}>删除</Text>
                         </View>
                     </View>
                 </View>
@@ -99,6 +102,10 @@ export default class Address extends Component {
         if (navigator) {
             navigator.pop();
         }
+    }
+
+    _delete() {
+        this.refs['delete_picker'].show('是否确认删除该地址', '是', '否', this);
     }
 }
 
