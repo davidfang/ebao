@@ -4,8 +4,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
 
 import PickerWidget from '../components/PickerWidget';
+import AddressAction from './AddressAction';
 
-export default class Address extends Component {
+export default class AddressList extends Component {
     constructor(props) {
         super(props);
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -51,7 +52,7 @@ export default class Address extends Component {
                 </View>
                 <View style={styles.body}>
                     <View style={styles.add_address_box}>
-                        <Button style={styles.add_address_btn}>添加地址</Button>
+                        <Button style={styles.add_address_btn} onPress={this._gotoAddressAction.bind(this, '添加地址')}>添加地址</Button>
                     </View>
                     <ListView dataSource={this.state.dataSource} enableEmptySections={true}
                               automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
@@ -87,7 +88,7 @@ export default class Address extends Component {
                             }
                         </View>
                         <View style={styles.item_ed_box}>
-                            <Text style={styles.item_ed_text}>编辑</Text>
+                            <Text style={styles.item_ed_text} onPress={this._gotoAddressAction.bind(this, '编辑地址', rowData)}>编辑</Text>
                             <Text style={styles.item_ed_text} onPress={this._delete.bind(this)}>删除</Text>
                         </View>
                     </View>
@@ -106,6 +107,22 @@ export default class Address extends Component {
 
     _delete() {
         this.refs['delete_picker'].show('是否确认删除该地址', '是', '否', this);
+    }
+    
+    _gotoAddressAction(title, rowData) {
+        const {navigator} = this.props;
+        rowData = rowData || {};
+        
+        if (navigator) {
+            navigator.push({
+                name: 'addressAction',
+                component: AddressAction,
+                params: {
+                    title: title,
+                    data: rowData
+                }
+            });
+        }
     }
 }
 
