@@ -13,7 +13,7 @@ export default class ebao extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTab: 'mine',
+            selectedTab: 'home',
             user: null,
             logined: false,
             booted: false

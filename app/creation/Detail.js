@@ -3,9 +3,11 @@ import {StyleSheet, View, Text, Dimensions, TouchableOpacity,
 import React, {Component} from 'react';
 import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Button from 'react-native-button';
+
 import config from '../common/config';
 import request from '../common/request';
-import Button from 'react-native-button';
+import User from '../account/User';
 
 export default class Detail extends Component {
     constructor(props) {
@@ -45,9 +47,13 @@ export default class Detail extends Component {
                     <Text style={styles.header_title} numberOfLines={1}>宝贝详情</Text>
                 </View>
                 <View style={styles.comments_author_box}>
-                    <Image style={styles.comments_avatar} source={{uri: data.author.avatar}}/>
+                    <TouchableOpacity onPress={this._gotoView.bind(this)}>
+                        <Image style={styles.comments_avatar} source={{uri: data.author.avatar}}/>
+                    </TouchableOpacity>
                     <View style={styles.comment_desc_box}>
-                        <Text style={styles.comments_nickname}>{data.author.nickname}</Text>
+                        <Text style={styles.comments_nickname} onPress={this._gotoView.bind(this)}>
+                            {data.author.nickname}
+                        </Text>
                         <Text style={styles.comments_title}>3天前</Text>
                     </View>
                 </View>
@@ -138,8 +144,20 @@ export default class Detail extends Component {
 
     _goBack() {
         const {navigator} = this.props;
+
         if (navigator) {
             navigator.pop();
+        }
+    }
+
+    _gotoView() {
+        const {navigator} = this.props;
+
+        if (navigator) {
+            navigator.push({
+                name: 'user',
+                component: User
+            });
         }
     }
 
