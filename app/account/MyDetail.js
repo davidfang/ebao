@@ -1,6 +1,7 @@
-import {View, Text, Picker, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, Image, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {ImagePickerManager} from 'NativeModules';
 
 import PickerAlert from '../components/PickerAlert';
 import PickerWidget from '../components/PickerWidget';
@@ -11,7 +12,8 @@ export default class MyDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            sex: ''
+            sex: '',
+            avatarData: ''
         }
     }
 
@@ -29,7 +31,13 @@ export default class MyDetail extends Component {
                     <View style={[styles.body_avatar_box, styles.backgound_white, styles.border_bottom, styles.padding_left_and_right]}>
                         <View style={styles.avatar_box}>
                             <Text style={styles.avatar_text}>头像</Text>
-                            <View style={styles.avatar_image}></View>
+                            {
+                                this.state.avatarData ?
+                                    <View>
+                                        <Image style={styles.avatar_image} source={{url: this.state.avatarData}}/>
+                                    </View> :
+                                    <View style={styles.avatar_fake_image}/>
+                            }
                         </View>
                         <Text style={styles.avatar_edit} onPress={this._avatarPick.bind(this)}>编辑</Text>
                     </View>
@@ -79,7 +87,54 @@ export default class MyDetail extends Component {
     }
 
     _avatarPick() {
-        this.refs['avatar_picker'].show('设置头像', '拍摄', '从相册选择', this);
+        //this.refs['avatar_picker'].show('设置头像', '拍摄', '从相册选择', this);
+        let me = this;
+        let avatarOptions = {
+            title: '选择头像',
+            cancelButtonTitle: '取消',
+            takePhotoButtonTitle: '拍摄',
+            chooseFromLibraryButtonTitle: '从相册选择',
+            quality: 0.75,
+            avatarOptions: true,
+            noData: false,
+            storageOptions: {
+                skipBackup: true,
+                path: 'images'
+            }
+        };
+
+        ImagePickerManager.showImagePicker(avatarOptions, (response) => {
+            if (response.didCancel) {
+                return;
+            }
+
+            let avatarData = 'data:image/jpeg;base64,' + response.data;
+            me.setState({
+                avatarData: avatarData
+            });
+
+            // else if (response.error) {
+            //     console.log('ImagePicker Error: ', response.error);
+            // }
+            // else if (response.customButton) {
+            //     console.log('User tapped custom button: ', response.customButton);
+            // }
+            // else {
+            //     // You can display the image using either data...
+            //     const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
+            //
+            //     // or a reference to the platform specific asset location
+            //     if (Platform.OS === 'ios') {
+            //         const source = {uri: response.uri.replace('file://', ''), isStatic: true};
+            //     } else {
+            //         const source = {uri: response.uri, isStatic: true};
+            //     }
+            //
+            //     this.setState({
+            //         avatarSource: source
+            //     });
+            // }
+        });
     }
 
     _gotoView() {
@@ -170,8 +225,16 @@ const styles = StyleSheet.create({
     avatar_image: {
         width: 80,
         height: 80,
-        backgroundColor: '#ee735c',
         borderRadius: 40,
+        marginTop: 20,
+        marginBottom: 20,
+        marginLeft: 20
+    },
+    avatar_fake_image: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: '#ee735c',
         marginTop: 20,
         marginBottom: 20,
         marginLeft: 20
