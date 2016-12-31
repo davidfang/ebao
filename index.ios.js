@@ -8,12 +8,13 @@ import Edit from './app/edit/Edit';
 import Mine from './app/account/index';
 import Login from './app/account/Login';
 import Slider from './app/account/Slider';
+import Publish from './app/publish/index';
 
 export default class ebao extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTab: 'home',
+            selectedTab: 'publish',
             user: null,
             logined: false,
             booted: false
@@ -69,7 +70,7 @@ export default class ebao extends Component {
                                         selectedTab: 'publish'
                                     });
                                  }}>
-                    <Edit/>
+                    <Publish/>
                 </Icon.TabBarItem>
                 <Icon.TabBarItem iconName="ios-recording-outline" selectedIconName="ios-recording" title="消息"
                                  selected={this.state.selectedTab === 'message'}
