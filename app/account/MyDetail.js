@@ -8,6 +8,9 @@ import PickerWidget from '../components/PickerWidget';
 
 import AddressList from './AddressList';
 
+import request from '../common/request';
+import config from '../common/config';
+
 export default class MyDetail extends Component {
     constructor(props) {
         super(props);
@@ -113,27 +116,18 @@ export default class MyDetail extends Component {
                 avatarData: avatarData
             });
 
-            // else if (response.error) {
-            //     console.log('ImagePicker Error: ', response.error);
-            // }
-            // else if (response.customButton) {
-            //     console.log('User tapped custom button: ', response.customButton);
-            // }
-            // else {
-            //     // You can display the image using either data...
-            //     const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
-            //
-            //     // or a reference to the platform specific asset location
-            //     if (Platform.OS === 'ios') {
-            //         const source = {uri: response.uri.replace('file://', ''), isStatic: true};
-            //     } else {
-            //         const source = {uri: response.uri, isStatic: true};
-            //     }
-            //
-            //     this.setState({
-            //         avatarSource: source
-            //     });
-            // }
+            let timestamp = Date.now();
+            let signatureUrl = config.api.base + config.api.signature;
+            let accessToken = 'fake';
+
+            request.post(signatureUrl, {
+                accessToken: accessToken,
+                timestamp: timestamp
+            }).then((data) => {
+                if (data && data.success) {
+                    
+                }
+            });
         });
     }
 
