@@ -4,9 +4,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {ImagePickerManager} from 'NativeModules';
 import Picker from 'react-native-picker';
 
-import PickerAlert from '../components/PickerAlert';
-import PickerWidget from '../components/PickerWidget';
-
 import AddressList from './AddressList';
 
 import request from '../common/request';
@@ -84,7 +81,6 @@ export default class MyDetail extends Component {
     }
 
     _sexPick() {
-        //this.refs['sex_picker'].show(this, this._setSex);
         let me = this;
         Picker.init({
             pickerConfirmBtnText: '确认',
@@ -110,7 +106,6 @@ export default class MyDetail extends Component {
     }
 
     _avatarPick() {
-        //this.refs['avatar_picker'].show('设置头像', '拍摄', '从相册选择', this);
         let me = this;
         let avatarOptions = {
             title: '选择头像',
