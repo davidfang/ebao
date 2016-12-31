@@ -1,8 +1,17 @@
-import {View, Text, TextInput, TouchableHighlight, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, NativeModules} from 'react-native';
 import React, {Component} from 'react';
 import Button from 'react-native-button';
+import CameraRollPicker from 'react-native-camera-roll-picker';
 
 export default class Mine extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            num: 0,
+            selected: [],
+        };
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -18,9 +27,9 @@ export default class Mine extends Component {
                     </View>
                     <View style={[styles.photos, styles.border_bottom, styles.backgound_white,
                         styles.padding_left_and_right]}>
-                        <TouchableHighlight style={styles.photos_box} onPress={this._uploadPhoto.bind(this)}>
+                        <TouchableOpacity style={styles.photos_box} underlayColor="#fff" onPress={this._selectPhotos.bind(this)}>
                             <Text style={styles.photos_text}>添加图片</Text>
-                        </TouchableHighlight>
+                        </TouchableOpacity>
                     </View>
                     <View style={[styles.price, styles.margin_top, styles.border_top, styles.border_bottom,
                         styles.backgound_white, styles.padding_left_and_right]}>
@@ -35,8 +44,10 @@ export default class Mine extends Component {
         );
     }
 
-    _uploadPhoto() {
-        
+    _selectPhotos() {
+        let me = this;
+
+
     }
 
     _publish() {
