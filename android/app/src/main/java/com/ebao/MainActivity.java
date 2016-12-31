@@ -1,6 +1,7 @@
 package com.ebao;
 
 import com.facebook.react.ReactActivity;
+import com.beefe.picker.PickerViewPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.oblador.vectoricons.VectorIconsPackage;

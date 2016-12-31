@@ -2,6 +2,7 @@ import {View, Text, Image, TouchableOpacity, StyleSheet, Dimensions} from 'react
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {ImagePickerManager} from 'NativeModules';
+import Picker from 'react-native-picker';
 
 import PickerAlert from '../components/PickerAlert';
 import PickerWidget from '../components/PickerWidget';
@@ -15,7 +16,6 @@ export default class MyDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            sex: '',
             avatarData: ''
         }
     }
@@ -65,8 +65,6 @@ export default class MyDetail extends Component {
                         <Text style={styles.body_item_text2} onPress={this._gotoView.bind(this)}>查看</Text>
                     </View>
                 </View>
-                <PickerAlert ref="sex_picker" options={['男', '女']}/>
-                <PickerWidget ref="avatar_picker"/>
             </View>
         );
     }
@@ -86,7 +84,29 @@ export default class MyDetail extends Component {
     }
 
     _sexPick() {
-        this.refs['sex_picker'].show(this, this._setSex);
+        //this.refs['sex_picker'].show(this, this._setSex);
+        let me = this;
+        Picker.init({
+            pickerConfirmBtnText: '确认',
+            pickerCancelBtnText: '取消',
+            pickerTitleText: '请选择',
+            pickerConfirmBtnColor: [0, 0, 0, 1],
+            pickerCancelBtnColor: [0, 0, 0, 1],
+            pickerData: me._createDateData(),
+            pickerToolBarFontSize: 18,
+            pickerFontSize: 20,
+            pickerFontColor: [255, 0 ,0, 1],
+            onPickerConfirm: (pickedValue, pickedIndex) => {
+                console.log('sex', pickedValue, pickedIndex);
+            },
+            onPickerCancel: (pickedValue, pickedIndex) => {
+                console.log('sex', pickedValue, pickedIndex);
+            },
+            onPickerSelect: (pickedValue, pickedIndex) => {
+                console.log('sex', pickedValue, pickedIndex);
+            }
+        });
+        Picker.show();
     }
 
     _avatarPick() {
@@ -140,6 +160,12 @@ export default class MyDetail extends Component {
                 component: AddressList
             });
         }
+    }
+
+    _createDateData() {
+        return (
+            ['男', '女']
+        );
     }
 }
 
