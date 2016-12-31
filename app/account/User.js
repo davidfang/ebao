@@ -3,6 +3,8 @@ import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
 
+import UserUnused from './UserUnused';
+
 export default class User extends Component {
     render() {
         return (
@@ -40,7 +42,7 @@ export default class User extends Component {
                                 <Text style={styles.user_good_item_text}>3</Text>
                             </View>
                         </View>
-                        <Text style={styles.user_item_text2}>查看</Text>
+                        <Text style={styles.user_item_text2} onPress={this._gotoView.bind(this)}>查看</Text>
                     </View>
                     <View style={[styles.margin_top, styles.user_item, styles.backgound_white, styles.border_top,
                         styles.border_bottom, styles.padding_left_and_right]}>
@@ -60,6 +62,17 @@ export default class User extends Component {
 
         if (navigator) {
             navigator.pop();
+        }
+    }
+
+    _gotoView() {
+        const {navigator} = this.props;
+
+        if (navigator) {
+            navigator.push({
+                name: 'userUnused',
+                component: UserUnused
+            });
         }
     }
 

@@ -5,7 +5,7 @@ import * as Progress from 'react-native-progress';
 
 import Detail from '../creation/Detail';
 
-export default class Mark extends Component {
+export default class UserUnused extends Component {
     constructor(props) {
         super(props);
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -41,7 +41,7 @@ export default class Mark extends Component {
                         <Icon style={styles.back_icon} name="ios-arrow-back"/>
                         <Text style={styles.back_text}>返回</Text>
                     </TouchableOpacity>
-                    <Text style={styles.header_title}>我的收藏</Text>
+                    <Text style={styles.header_title}>卖家闲置</Text>
                 </View>
                 <View style={styles.body}>
                     <ListView dataSource={this.state.dataSource} enableEmptySections={true}
@@ -163,7 +163,6 @@ const styles = StyleSheet.create({
     },
     item: {
         padding: 10,
-        marginBottom: 10,
         backgroundColor: '#fff'
     },
     item_publisher: {
