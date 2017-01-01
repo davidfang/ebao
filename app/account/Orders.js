@@ -5,6 +5,7 @@ import {TabViewAnimated, TabBarTop} from "react-native-tab-view";
 import Button from 'react-native-button';
 
 import Detail from '../creation/Detail';
+import Rating from './Rating';
 
 export default class Orders extends Component {
     constructor(props) {
@@ -101,7 +102,7 @@ export default class Orders extends Component {
                             <View style={[styles.item_footer, styles.border_bottom, styles.padding_left_and_right]}>
                                 <Text style={styles.item_footer_desc}>共1件宝贝,合计16元(含运费6元)</Text>
                                 <View>
-                                    <Button style={styles.item_footer_btn}>评价</Button>
+                                    <Button style={styles.item_footer_btn} onPress={this._gotoView.bind(this)}>评价</Button>
                                 </View>
                             </View>
                         </View>
@@ -277,6 +278,16 @@ export default class Orders extends Component {
                         "thumb":"http://dummyimage.com/1280x720/f279a9)"
                     }
                 }
+            });
+        }
+    }
+
+    _gotoView() {
+        const {navigator} = this.props;
+        if (navigator) {
+            navigator.push({
+                name: 'rating',
+                component: Rating
             });
         }
     }

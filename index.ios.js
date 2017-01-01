@@ -15,7 +15,7 @@ export default class ebao extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTab: 'cart',
+            selectedTab: 'mine',
             user: null,
             logined: false,
             booted: false
