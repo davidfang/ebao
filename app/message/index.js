@@ -2,6 +2,8 @@ import {View, Text, TextInput, ListView, TouchableOpacity, TouchableHighlight,
     StyleSheet, Dimensions} from 'react-native';
 import React, {Component} from 'react';
 
+import Questions from './Questions';
+
 export default class Message extends Component {
     constructor(props) {
         super(props);
@@ -63,7 +65,14 @@ export default class Message extends Component {
     }
 
     _gotoView() {
-        
+        const {navigator} = this.props;
+
+        if (navigator) {
+            navigator.push({
+                name: 'questions',
+                component: Questions
+            });
+        }
     }
 }
 
