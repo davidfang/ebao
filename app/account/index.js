@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
         marginTop: 5
     },
     my_edit: {
-        width: 32
+        width: 34
     },
     my_edit_text: {
         color: '#666',
