@@ -3,22 +3,23 @@ import {AppRegistry, StyleSheet, AsyncStorage, View, Text,
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import Home from './app/creation/index';
-import Edit from './app/edit/Edit';
-import Mine from './app/account/index';
-import Login from './app/account/Login';
 import Slider from './app/account/Slider';
-import Publish from './app/publish/index';
+import Login from './app/account/Login';
+import Home from './app/creation/index';
 import Cart from './app/cart/index';
+import Publish from './app/publish/index';
+import Message from './app/message/index';
+import Mine from './app/account/index';
 
 export default class ebao extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTab: 'mine',
+            selectedTab: 'message',
             user: null,
             logined: false,
-            booted: false
+            booted: false,
+            notifCount: 99
         }
     }
 
@@ -84,12 +85,22 @@ export default class ebao extends Component {
                 </Icon.TabBarItem>
                 <Icon.TabBarItem iconName="ios-recording-outline" selectedIconName="ios-recording" title="消息"
                                  selected={this.state.selectedTab === 'message'}
+                                 badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
                                  onPress={() => {
                                     this.setState({
                                         selectedTab: 'message'
                                     });
                                  }}>
-                    <Edit/>
+                    <Navigator
+                        initialRoute={{ name: 'message', component: Message }}
+                        configureScene={(route) => {
+                                return Navigator.SceneConfigs.FloatFromRight;
+                            }}
+                        renderScene={(route, navigator) => {
+                                let Component = route.component;
+                                return <Component {...route.params} navigator={navigator} />;
+                            }}
+                    />
                 </Icon.TabBarItem>
                 <Icon.TabBarItem iconName="ios-person-outline" selectedIconName="ios-person" title="我的"
                                  selected={this.state.selectedTab === 'mine'}
