@@ -83,6 +83,7 @@ export default class UserUnused extends Component {
 
     _goBack() {
         const {navigator} = this.props;
+
         if (navigator) {
             navigator.pop();
         }
@@ -90,6 +91,7 @@ export default class UserUnused extends Component {
 
     _gotoDetail(rowData) {
         const {navigator} = this.props;
+        
         if (navigator) {
             navigator.push({
                 name: 'detail',

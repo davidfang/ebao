@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import * as Progress from 'react-native-progress';
 
 import Detail from '../creation/Detail';
+import QuestionDetail from './QuestionDetail';
 
 export default class Questions extends Component {
     constructor(props) {
@@ -53,7 +54,7 @@ export default class Questions extends Component {
             <View style={[styles.item, styles.border_bottom]}>
                 <View style={styles.item_messager}>
                     <View style={styles.item_messager_avatar}></View>
-                    <View style={styles.item_publiser_desc}>
+                    <View style={styles.item_messager_desc}>
                         <Text style={styles.item_messager_nickname}>奥特曼</Text>
                         <Text style={styles.item_messager_time}>2016-11-11 11:11:11</Text>
                     </View>
@@ -103,7 +104,7 @@ export default class Questions extends Component {
                     }
                 }
             } else if (name === 'question') {
-                
+                info.component = QuestionDetail;
             }
 
             navigator.push(info);
@@ -112,7 +113,6 @@ export default class Questions extends Component {
 }
 
 const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ee735c',
         borderRadius: 20
     },
-    item_publiser_desc: {
+    item_messager_desc: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
