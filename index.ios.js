@@ -9,12 +9,13 @@ import Mine from './app/account/index';
 import Login from './app/account/Login';
 import Slider from './app/account/Slider';
 import Publish from './app/publish/index';
+import Cart from './app/cart/index';
 
 export default class ebao extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTab: 'publish',
+            selectedTab: 'cart',
             user: null,
             logined: false,
             booted: false
@@ -61,7 +62,16 @@ export default class ebao extends Component {
                                         selectedTab: 'cart'
                                     });
                                  }}>
-                    <Edit/>
+                    <Navigator
+                        initialRoute={{ name: 'cart', component: Cart }}
+                        configureScene={(route) => {
+                                return Navigator.SceneConfigs.FloatFromRight;
+                            }}
+                        renderScene={(route, navigator) => {
+                                let Component = route.component;
+                                return <Component {...route.params} navigator={navigator} />;
+                            }}
+                    />
                 </Icon.TabBarItem>
                 <Icon.TabBarItem iconName="ios-paw-outline" selectedIconName="ios-paw" title="发布"
                                  selected={this.state.selectedTab === 'publish'}

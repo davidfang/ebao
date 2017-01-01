@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import Button from 'react-native-button';
 import CameraRollPicker from 'react-native-camera-roll-picker';
 
-export default class Mine extends Component {
+export default class Publish extends Component {
     constructor(props) {
         super(props);
         this.state = {
