@@ -4,6 +4,7 @@ import Button from 'react-native-button';
 import CameraRollPicker from 'react-native-camera-roll-picker';
 
 import Detail from '../creation/Detail';
+import ConfrimOrder from '../cart/ComfirmOrder';
 
 export default class Cart extends Component {
     constructor(props) {
@@ -42,11 +43,11 @@ export default class Cart extends Component {
                     <Text style={styles.header_title}>购物车</Text>
                 </View>
                 <View style={styles.body}>
-                    <View style={[styles.footer, styles.backgound_white, styles.border_top, styles.border_bottom,
+                    <View style={[styles.footer, styles.backgound_white, styles.border_bottom,
                         styles.padding_left_and_right]}>
-                        <Text style={styles.footer_desc}>共1件宝贝,合计16元(含运费6元)</Text>
+                        <Text style={styles.footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
                         <View>
-                            <Button style={styles.footer_btn}>结算</Button>
+                            <Button style={styles.footer_btn} onPress={this._gotoView.bind(this, 'confirmOrder')}>结算</Button>
                         </View>
                     </View>
                     <ListView dataSource={this.state.dataSource} enableEmptySections={true}
@@ -62,7 +63,7 @@ export default class Cart extends Component {
     _renderItem(rowData, rowID) {
         return (
             <View style={styles.item}>
-                <TouchableHighlight style={styles.item_info} underlayColor="#fff" onPress={this._gotoDetail.bind(this)}>
+                <TouchableHighlight style={styles.item_info} underlayColor="#fff" onPress={this._gotoView.bind(this, 'detail')}>
                     <Image style={styles.item_image} source={rowData.image}/>
                 </TouchableHighlight>
                 <View style={styles.item_part}>
@@ -96,14 +97,17 @@ export default class Cart extends Component {
         );
     }
 
-    _gotoDetail() {
+    _gotoView(name) {
         const {navigator} = this.props;
 
         if (navigator) {
-            navigator.push({
-                name: 'detail',
-                component: Detail,
-                params: {
+            let info = {
+                name: name
+            };
+
+            if (name === 'detail') {
+                info.component = Detail;
+                info.params = {
                     //TODO: 数据都是假的,真实场景下,应该是Good表带出相关信息
                     data: {
                         "title":"信象然争江点强上传导细每内好强克下。委年但类土器门题化家员音些。共金四际强立般都一位以体在标料次。",
@@ -116,7 +120,11 @@ export default class Cart extends Component {
                         "thumb":"http://dummyimage.com/1280x720/f279a9)"
                     }
                 }
-            });
+            } else if (name === 'confirmOrder') {
+                info.component = ConfrimOrder;
+            }
+
+            navigator.push(info);
         }
     }
 
@@ -253,8 +261,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        position: 'absolute',
-        bottom: 50
+        //position: 'absolute',
+        //bottom: 50
     },
     footer_desc: {
         padding: 10,
@@ -272,5 +280,5 @@ const styles = StyleSheet.create({
         color: '#ee735c',
         backgroundColor: '#ffffff',
         overflow:'hidden'
-    },
+    }
 });
