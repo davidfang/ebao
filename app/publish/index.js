@@ -46,8 +46,6 @@ export default class Publish extends Component {
 
     _selectPhotos() {
         let me = this;
-
-
     }
 
     _publish() {
