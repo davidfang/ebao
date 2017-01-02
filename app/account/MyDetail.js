@@ -91,7 +91,7 @@ export default class MyDetail extends Component {
             pickerData: me._createDateData(),
             pickerToolBarFontSize: 18,
             pickerFontSize: 20,
-            pickerFontColor: [255, 0 ,0, 1],
+            pickerFontColor: [31, 31 ,31, 1],
             onPickerConfirm: (pickedValue, pickedIndex) => {
                 console.log('sex', pickedValue, pickedIndex);
             },
