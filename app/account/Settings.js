@@ -12,7 +12,7 @@ export default class Settings extends Component {
                         <Icon style={styles.back_icon} name="ios-arrow-back"/>
                         <Text style={styles.back_text}>返回</Text>
                     </TouchableOpacity>
-                    <Text style={styles.header_title}>我的订单</Text>
+                    <Text style={styles.header_title}>设置</Text>
                 </View>
                 <View style={styles.body}>
                     <View style={[styles.body_item, styles.backgound_white, styles.border_bottom, styles.padding_left_and_right]}>
