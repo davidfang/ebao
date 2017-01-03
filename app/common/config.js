@@ -17,6 +17,14 @@ module.exports = {
         },
     },
 
+    CLOUDINARY: {
+        cloud_name: 'ebao',
+        api_key: '539978471152977',
+        api_secret: 'iuYGxrtrSRa1cFyrmcwO9N0JvGI',
+        base: 'http://res.cloudinary.com/ebao',
+        image: 'https://api.cloudinary.com/v1_1/ebao/image/upload'
+    },
+
     imagePath: {
         creationListHeader: '../../assets/images/creation/u6.jpg'
     },

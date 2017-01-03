@@ -3,6 +3,7 @@ import {View, Text, TextInput, Image, TouchableOpacity, Modal, AlertIOS,
 import React, {Component} from 'react';
 import Button from 'react-native-button';
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as Progress from 'react-native-progress';
 import {ImagePickerManager} from 'NativeModules';
 /**
  * 说明:此处上传图片应该是多选的,下面的组件就有该功能,
@@ -10,6 +11,7 @@ import {ImagePickerManager} from 'NativeModules';
  */
 import CameraRollPicker from 'react-native-camera-roll-picker';
 import Picker from 'react-native-picker';
+import sha1 from 'sha1';
 
 import config from '../common/config';
 import request from '../common/request';
@@ -101,7 +103,76 @@ export default class Publish extends Component {
             me.setState({
                 descImage: avatarData
             });
+
+            let timestamp = Date.now();
+            let tags = 'app,avatar';
+            let folder = 'avatar';
+            let signatureURL = config.api.base + config.api.signature;
+
+            request.post(signatureURL, {
+                accessToken: '123',
+                timestamp: timestamp,
+                type: 'avatar',
+                folder: folder,
+                tags: tags
+            }).then((data) => {
+                if (data && data.success) {
+                    let signature = 'folder=' + folder + '&tags=' + tags + '&timestamp=' + timestamp + config.CLOUDINARY.api_secret;
+                    signature = sha1(signature);
+
+                    let body = new FormData();
+                    body.append('folder', folder);
+                    body.append('tags', tags);
+                    body.append('timestamp', timestamp);
+                    body.append('signature', signature);
+                    body.append('api_key', config.CLOUDINARY.api_key);
+                    body.append('resource_type', 'image');
+                    body.append('file', avatarData);
+
+                    me._upload(body);
+                }
+            });
         });
+    }
+
+    _upload(body) {
+        let xhr = new XMLHttpRequest();
+        let url = config.CLOUDINARY.image;
+
+        xhr.open('POST', url);
+        xhr.onload = () => {
+            if (xhr.status !== 200) {
+                AlertIOS.alert('请求失败');
+                console.log('jiangwu', xhr.responseText);
+                return;
+            }
+            if (!xhr.responseText) {
+                AlertIOS.alert('请求失败');
+                return;
+            }
+
+            let response;
+            try {
+                response = JSON.parse(xhr.responseText);
+            } catch (e) {
+                console.log(e, 'parse fails');
+            }
+
+            if (response && response.public_id) {
+                console.log(response);
+            }
+        }
+
+        if (xhr.upload) {
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    let percent = Number((event.loaded / event.total).toFixed(2));
+                    console.log('jiangwu', percent);
+                }
+            }
+        }
+
+        xhr.send(body);
     }
 
     _publish() {
