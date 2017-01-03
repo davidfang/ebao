@@ -13,6 +13,7 @@ import Picker from 'react-native-picker';
 
 import config from '../common/config';
 import request from '../common/request';
+import Detail from '../creation/Detail';
 
 export default class Publish extends Component {
     constructor(props) {
@@ -148,7 +149,31 @@ export default class Publish extends Component {
                                 });
                             }
                         },
-                        {text: '查看宝贝详情', onPress: () => console.log('Bar Pressed!')},
+                        {
+                            text: '查看宝贝详情',
+                            onPress: () => {
+                                const {navigator} = me.props;
+                                if (navigator) {
+                                    navigator.push({
+                                        name: 'detail',
+                                        component: Detail,
+                                        params: {
+                                            data: {
+                                                "title":"信象然争江点强上传导细每内好强克下。委年但类土器门题化家员音些。共金四际强立般都一位以体在标料次。",
+                                                "_id":"220000200801184370",
+                                                "video":"http://video.iblack7.com/video_hcwijdwneqantgb4yqgx.mp4",
+                                                "author": {
+                                                    "avatar":"http://dummyimage.com/640X640/86f279)",
+                                                    "nickname":"Jason White"
+                                                },
+                                                "thumb":"http://dummyimage.com/1280x720/f279a9)",
+                                                'resetCallback': me._resetStateOfForm.bind(me)
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        },
                     ]
                 )
             }
@@ -198,6 +223,15 @@ export default class Publish extends Component {
     _setStateOfDesc(value) {
         this.setState({
             desc: value
+        });
+    }
+
+    _resetStateOfForm() {
+        this.setState({
+            title: '',
+            desc: '',
+            descImage: '',
+            price: 0
         });
     }
 }

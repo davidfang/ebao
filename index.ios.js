@@ -81,7 +81,16 @@ export default class ebao extends Component {
                                         selectedTab: 'publish'
                                     });
                                  }}>
-                    <Publish/>
+                    <Navigator
+                        initialRoute={{ name: 'publish', component: Publish }}
+                        configureScene={(route) => {
+                                return Navigator.SceneConfigs.FloatFromRight;
+                            }}
+                        renderScene={(route, navigator) => {
+                                let Component = route.component;
+                                return <Component {...route.params} navigator={navigator} />;
+                            }}
+                    />
                 </Icon.TabBarItem>
                 <Icon.TabBarItem iconName="ios-recording-outline" selectedIconName="ios-recording" title="消息"
                                  selected={this.state.selectedTab === 'message'}

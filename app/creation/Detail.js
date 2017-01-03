@@ -143,10 +143,12 @@ export default class Detail extends Component {
     }
 
     _goBack() {
-        const {navigator} = this.props;
+        const {navigator, data} = this.props;
 
         if (navigator) {
             navigator.pop();
+            //发布页面push Detail页面时带上此回调,目的是goBack后清空Form表单
+            data && data.resetCallback && data.resetCallback();
         }
     }
 
