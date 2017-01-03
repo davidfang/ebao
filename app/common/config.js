@@ -8,6 +8,15 @@ module.exports = {
             'Content-Type': 'application/json'
         },
     },
+
+    header_put: {
+        method: 'PUT',
+        header: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+    },
+
     imagePath: {
         creationListHeader: '../../assets/images/creation/u6.jpg'
     },
@@ -17,6 +26,11 @@ module.exports = {
         comment: '/api/comments',
         signup: '/api/u/signup',
         verify: '/api/u/verify',
-        signature: '/api/signatrue'
+        signature: '/api/signatrue',
+
+        host: 'http://localhost:9999/',
+        good: {
+            publish: 'good'
+        }
     }
 }

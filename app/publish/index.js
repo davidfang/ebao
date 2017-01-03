@@ -18,8 +18,12 @@ export default class Publish extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isVisible: false,
+
+            title: '',
+            desc: '',
             descImage: '',
-            isVisible: false
+            price: '0'
         };
     }
 
@@ -31,10 +35,12 @@ export default class Publish extends Component {
                 </View>
                 <View style={styles.body}>
                     <View style={[styles.border_bottom, styles.backgound_white, styles.padding_left_and_right]}>
-                        <TextInput style={styles.title_input} placeholder="标题(品类/品牌/型号等)"/>
+                        <TextInput style={styles.title_input} placeholder="标题(品类/品牌/型号等)"
+                                   onChangeText={this._setStateOfTitle.bind(this)}/>
                     </View>
                     <View style={[styles.border_bottom, styles.backgound_white, styles.padding_left_and_right]}>
-                        <TextInput style={styles.desc_input} multiline={true} placeholder="描述下你的宝贝..."/>
+                        <TextInput style={styles.desc_input} multiline={true} placeholder="描述下你的宝贝..."
+                                   onChangeText={this._setStateOfDesc.bind(this)}/>
                     </View>
                     <View style={[styles.photos, styles.border_bottom, styles.backgound_white,
                         styles.padding_left_and_right]}>
@@ -91,7 +97,18 @@ export default class Publish extends Component {
     }
 
     _publish() {
+        let {title, desc, descImage, price} = this.state;
+        console.log(title, desc, price);
+        let url = config.api.host + config.api.good.publish;
 
+        request.put(url, {
+            title: title,
+            desc: desc,
+            descImage: descImage,
+            price: price
+        }).then((data) => {
+            console.log(data);
+        });
     }
 
     _createDateData() {
@@ -114,16 +131,30 @@ export default class Publish extends Component {
             pickerFontSize: 20,
             pickerFontColor: [31, 31 ,31, 1],
             onPickerConfirm: (pickedValue, pickedIndex) => {
-                console.log('sex', pickedValue, pickedIndex);
+                me.setState({
+                    price: pickedValue
+                });
             },
             onPickerCancel: (pickedValue, pickedIndex) => {
-                console.log('sex', pickedValue, pickedIndex);
+
             },
             onPickerSelect: (pickedValue, pickedIndex) => {
-                console.log('sex', pickedValue, pickedIndex);
+
             }
         });
         Picker.show();
+    }
+
+    _setStateOfTitle(value) {
+        this.setState({
+            title: value
+        });
+    }
+
+    _setStateOfDesc(value) {
+        this.setState({
+            desc: value
+        });
     }
 }
 

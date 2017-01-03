@@ -26,4 +26,14 @@ request.post = function (url, body) {
         .then((responseJson) => Mock.mock(responseJson));
 }
 
+
+request.put = function (url, body) {
+    var options = _.extend(config.header_put, {
+        body: JSON.stringify(body)
+    });
+
+    return fetch(url, options)
+        .then((response) => response.json());
+}
+
 module.exports = request;
