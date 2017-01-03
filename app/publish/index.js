@@ -1,4 +1,4 @@
-import {View, Text, TextInput, Image, TouchableOpacity, Modal,
+import {View, Text, TextInput, Image, TouchableOpacity, Modal, AlertIOS,
     StyleSheet, Dimensions, NativeModules} from 'react-native';
 import React, {Component} from 'react';
 import Button from 'react-native-button';
@@ -23,7 +23,7 @@ export default class Publish extends Component {
             title: '',
             desc: '',
             descImage: '',
-            price: '0'
+            price: 0
         };
     }
 
@@ -35,11 +35,11 @@ export default class Publish extends Component {
                 </View>
                 <View style={styles.body}>
                     <View style={[styles.border_bottom, styles.backgound_white, styles.padding_left_and_right]}>
-                        <TextInput style={styles.title_input} placeholder="标题(品类/品牌/型号等)"
+                        <TextInput style={styles.title_input} placeholder="标题(品类/品牌/型号等)" value={this.state.title}
                                    onChangeText={this._setStateOfTitle.bind(this)}/>
                     </View>
                     <View style={[styles.border_bottom, styles.backgound_white, styles.padding_left_and_right]}>
-                        <TextInput style={styles.desc_input} multiline={true} placeholder="描述下你的宝贝..."
+                        <TextInput style={styles.desc_input} multiline={true} placeholder="描述下您的宝贝..." value={this.state.desc}
                                    onChangeText={this._setStateOfDesc.bind(this)}/>
                     </View>
                     <View style={[styles.photos, styles.border_bottom, styles.backgound_white,
@@ -56,7 +56,14 @@ export default class Publish extends Component {
                     </View>
                     <View style={[styles.price, styles.margin_top, styles.border_top, styles.border_bottom,
                         styles.backgound_white, styles.padding_left_and_right]}>
-                        <Text style={styles.price_text1}>售价</Text>
+                        <View style={styles.price_box}>
+                            <Text style={styles.price_text1}>售价</Text>
+                            {
+                                this.state.price === 0 ?
+                                    <Text style={styles.price_text2}>未选择</Text> :
+                                    <Text style={styles.price_text2}>{'￥' + this.state.price}</Text>
+                            }
+                        </View>
                         <Text style={styles.price_text2} onPress={this._selectPrice.bind(this)}>选择</Text>
                     </View>
                     <Button style={styles.publish_button} onPress={this._publish.bind(this)}>
@@ -97,8 +104,26 @@ export default class Publish extends Component {
     }
 
     _publish() {
+        let me = this;
         let {title, desc, descImage, price} = this.state;
-        console.log(title, desc, price);
+
+        if (!title) {
+            AlertIOS.alert('请填写标题内容');
+            return;
+        }
+        if (!desc) {
+            AlertIOS.alert('请描述您的宝贝');
+            return;
+        }
+        if (!descImage) {
+            AlertIOS.alert('请选择您的宝贝的相关图片');
+            return;
+        }
+        if (!price) {
+            AlertIOS.alert('请选择售价');
+            return;
+        }
+
         let url = config.api.host + config.api.good.publish;
 
         request.put(url, {
@@ -107,7 +132,26 @@ export default class Publish extends Component {
             descImage: descImage,
             price: price
         }).then((data) => {
-            console.log(data);
+            if (data && data.status) {
+                AlertIOS.alert(
+                    '您的宝贝已上架',
+                    '您可继续发布或查看本宝贝详情',
+                    [
+                        {
+                            text: '继续发布',
+                            onPress: () => {
+                                me.setState({
+                                    title: '',
+                                    desc: '',
+                                    descImage: '',
+                                    price: 0
+                                });
+                            }
+                        },
+                        {text: '查看宝贝详情', onPress: () => console.log('Bar Pressed!')},
+                    ]
+                )
+            }
         });
     }
 
@@ -132,7 +176,7 @@ export default class Publish extends Component {
             pickerFontColor: [31, 31 ,31, 1],
             onPickerConfirm: (pickedValue, pickedIndex) => {
                 me.setState({
-                    price: pickedValue
+                    price: parseInt(pickedValue)
                 });
             },
             onPickerCancel: (pickedValue, pickedIndex) => {
@@ -226,6 +270,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
+    },
+    price_box: {
+        width: 100,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     price_text1: {
         fontSize: 16
