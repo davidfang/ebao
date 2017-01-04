@@ -192,23 +192,23 @@ export default class Detail extends Component {
     }
 
     _focus() {
-        this._setModelVisible(true);
+        this._setModalVisible(true);
     }
 
     _closeModal() {
-        this._setModelVisible(false);
+        this._setModalVisible(false);
     }
 
     _setIsLike(isLike) {
         this.setState({
             isLike: isLike
-        })
+        });
     }
 
-    _setModelVisible(isVisible) {
+    _setModalVisible(isVisible) {
         this.setState({
             modalVisible: isVisible
-        })
+        });
     }
 
     _submit() {
@@ -242,7 +242,7 @@ export default class Detail extends Component {
                         //TODO:还有其他值需要设置
                     });
 
-                    me._setModelVisible(false);
+                    me._setModalVisible(false);
                 }
             }).catch((error) => {
                 console.log(error);
@@ -250,7 +250,7 @@ export default class Detail extends Component {
                     isSending: false
                     //TODO:还有其他值需要设置
                 });
-                me._setModelVisible(false);
+                me._setModalVisible(false);
                 AlertIOS.alert('留言失败,请稍后重试!');
             })
         })

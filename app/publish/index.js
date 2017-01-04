@@ -21,12 +21,15 @@ export default class Publish extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isVisible: false,
-
             title: '',
             desc: '',
             descImage: '',
-            price: 0
+            price: 0,
+
+            url: '',
+
+            modalVisible: false,
+            progress: 0
         };
     }
 
@@ -45,6 +48,17 @@ export default class Publish extends Component {
                         <TextInput style={styles.desc_input} multiline={true} placeholder="描述下您的宝贝..." value={this.state.desc}
                                    onChangeText={this._setStateOfDesc.bind(this)}/>
                     </View>
+                    <View style={[styles.price, styles.border_bottom, styles.backgound_white, styles.padding_left_and_right]}>
+                        <View style={styles.price_box}>
+                            <Text style={styles.price_text1}>售价</Text>
+                            {
+                                this.state.price === 0 ?
+                                    <Text style={styles.price_text2}>未选择</Text> :
+                                    <Text style={styles.price_text2}>{'￥' + this.state.price}</Text>
+                            }
+                        </View>
+                        <Text style={styles.price_text2} onPress={this._selectPrice.bind(this)}>选择</Text>
+                    </View>
                     <View style={[styles.photos, styles.border_bottom, styles.backgound_white,
                         styles.padding_left_and_right]}>
                         {
@@ -57,21 +71,18 @@ export default class Publish extends Component {
                                 </TouchableOpacity>
                         }
                     </View>
-                    <View style={[styles.price, styles.margin_top, styles.border_top, styles.border_bottom,
-                        styles.backgound_white, styles.padding_left_and_right]}>
-                        <View style={styles.price_box}>
-                            <Text style={styles.price_text1}>售价</Text>
-                            {
-                                this.state.price === 0 ?
-                                    <Text style={styles.price_text2}>未选择</Text> :
-                                    <Text style={styles.price_text2}>{'￥' + this.state.price}</Text>
-                            }
-                        </View>
-                        <Text style={styles.price_text2} onPress={this._selectPrice.bind(this)}>选择</Text>
-                    </View>
                     <Button style={styles.publish_button} onPress={this._publish.bind(this)}>
                          立即发布
                     </Button>
+                    <Modal animationType={'fade'} visible={this.state.modalVisible} transparent={true}
+                           onRequestClose={() => {this._setModalVisible(false)}}>
+                        <View style={styles.modal_container}>
+                            <Progress.Pie style={styles.modal_progress} borderColor="#ee735c" color="#ee735c" size={90}
+                                progress={this.state.progress}
+                            />
+                            <Text style={styles.modal_text}>拼命上传中,请耐心等待!</Text>
+                        </View>
+                    </Modal>
                 </View>
             </View>
         );
@@ -99,6 +110,8 @@ export default class Publish extends Component {
                 return;
             }
 
+            me._setModalVisible(true);
+
             let avatarData = 'data:image/jpeg;base64,' + response.data;
             me.setState({
                 descImage: avatarData
@@ -117,7 +130,8 @@ export default class Publish extends Component {
                 tags: tags
             }).then((data) => {
                 if (data && data.success) {
-                    let signature = 'folder=' + folder + '&tags=' + tags + '&timestamp=' + timestamp + config.CLOUDINARY.api_secret;
+                    let signature = 'folder=' + folder + '&tags=' + tags +
+                        '&timestamp=' + timestamp + config.CLOUDINARY.api_secret;
                     signature = sha1(signature);
 
                     let body = new FormData();
@@ -136,6 +150,7 @@ export default class Publish extends Component {
     }
 
     _upload(body) {
+        let me = this;
         let xhr = new XMLHttpRequest();
         let url = config.CLOUDINARY.image;
 
@@ -159,7 +174,9 @@ export default class Publish extends Component {
             }
 
             if (response && response.public_id) {
-                console.log(response);
+                me.setState({
+                    url: response.url
+                });
             }
         }
 
@@ -167,7 +184,13 @@ export default class Publish extends Component {
             xhr.upload.onprogress = (event) => {
                 if (event.lengthComputable) {
                     let percent = Number((event.loaded / event.total).toFixed(2));
-                    console.log('jiangwu', percent);
+                    me.setState({
+                        progress: percent
+                    });
+
+                    if (percent === 1) {
+                        me._setModalVisible(false);
+                    }
                 }
             }
         }
@@ -177,7 +200,7 @@ export default class Publish extends Component {
 
     _publish() {
         let me = this;
-        let {title, desc, descImage, price} = this.state;
+        let {title, desc, descImage, url, price} = this.state;
 
         if (!title) {
             AlertIOS.alert('请填写标题内容');
@@ -196,12 +219,10 @@ export default class Publish extends Component {
             return;
         }
 
-        let url = config.api.host + config.api.good.publish;
-
-        request.put(url, {
+        request.put(config.api.host + config.api.good.publish, {
             title: title,
             desc: desc,
-            descImage: descImage,
+            url: url,
             price: price
         }).then((data) => {
             if (data && data.status) {
@@ -212,12 +233,7 @@ export default class Publish extends Component {
                         {
                             text: '继续发布',
                             onPress: () => {
-                                me.setState({
-                                    title: '',
-                                    desc: '',
-                                    descImage: '',
-                                    price: 0
-                                });
+                                me._resetStateOfForm();
                             }
                         },
                         {
@@ -303,6 +319,12 @@ export default class Publish extends Component {
             desc: '',
             descImage: '',
             price: 0
+        });
+    }
+
+    _setModalVisible(isVisible) {
+        this.setState({
+            modalVisible: isVisible
         });
     }
 }
@@ -402,15 +424,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         overflow:'hidden'
     },
-    model_container: {
+    modal_container: {
         flex: 1,
-        paddingTop: 45,
-        backgroundColor: '#fff',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        paddingTop: 150,
         alignItems: 'center'
     },
-    modal_close_icon: {
-        alignSelf: 'center',
-        fontSize: 30,
-        color: '#ee753c'
-    },
+    modal_text: {
+        marginTop: 20,
+        fontSize: 18,
+        color: '#fff'
+    }
 });
