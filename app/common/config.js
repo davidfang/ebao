@@ -38,6 +38,7 @@ module.exports = {
 
         host: 'http://localhost:9999/',
         good: {
+            list: 'goods',
             publish: 'good'
         }
     }

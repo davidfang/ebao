@@ -158,7 +158,7 @@ export default class Publish extends Component {
         xhr.onload = () => {
             if (xhr.status !== 200) {
                 AlertIOS.alert('请求失败');
-                console.log('jiangwu', xhr.responseText);
+                console.log(xhr.responseText);
                 return;
             }
             if (!xhr.responseText) {

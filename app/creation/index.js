@@ -110,17 +110,19 @@ export default class Home extends Component {
                 <View style={styles.item}>
                     <View style={styles.item_main}>
                         <View style={styles.item_image_container}>
-                            <Image style={styles.item_thumb} source={require('../../assets/images/creation/list_item.jpg')}/>
+                            <Image style={styles.item_thumb} source={{uri: rowData.url}}/>
                         </View>
                         <View style={styles.item_desc_container}>
                             <Text style={styles.item_title} numberOfLines={2}>
-                                苹果MacBook Pro 13.3英寸笔记本电脑 深空灰色(Core i5处理器/256G SSD闪存)
+                                {rowData.desc}
                             </Text>
-                            <Text style={[styles.item_total, styles.item_text_font, styles.item_desc_margin]}>总需:1000人次</Text>
+                            <Text style={[styles.item_total, styles.item_text_font, styles.item_desc_margin]}>
+                                总需{rowData.price}人次
+                            </Text>
                             <Progress.Bar style={styles.item_desc_margin} progress={0.3} height={3} width={214} color={'#ee735c'}/>
                             <View style={[styles.item_state, styles.item_desc_margin]}>
-                                <Text style={styles.item_text_font}>已参与人次:100</Text>
-                                <Text style={styles.item_remain}>剩余人次:900</Text>
+                                <Text style={styles.item_text_font}>已参与人次:0</Text>
+                                <Text style={styles.item_remain}>剩余人次:{rowData.price}</Text>
                             </View>
                         </View>
                     </View>
@@ -131,12 +133,10 @@ export default class Home extends Component {
 
     _fetchData() {
         var me = this;
-        request.get(config.api.base + config.api.creations, {
-            'accessToken': '123'
-        }).then((data) => {
-            if (data && data.success) {
+        request.get(config.api.host + config.api.good.list).then((data) => {
+            if (data && data.status) {
                 me.setState({
-                    dataSource: me.state.dataSource.cloneWithRows(data.data)
+                    dataSource: me.state.dataSource.cloneWithRows(data.result)
                 });
             }
         })
