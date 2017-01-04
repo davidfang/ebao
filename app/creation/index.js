@@ -110,7 +110,7 @@ export default class Home extends Component {
                 <View style={styles.item}>
                     <View style={styles.item_main}>
                         <View style={styles.item_image_container}>
-                            <Image style={styles.item_thumb} source={{uri: rowData.url}}/>
+                            <Image style={styles.item_thumb} source={require('../../assets/images/creation/list_item.jpg')}/>
                         </View>
                         <View style={styles.item_desc_container}>
                             <Text style={styles.item_title} numberOfLines={2}>
