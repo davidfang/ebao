@@ -33,7 +33,18 @@ export default class ebao extends Component {
         }
 
         if (!this.state.logined) {
-            return (<Login afterLogin={this._afterLogin.bind(this)}/>);
+            return (
+                <Navigator
+                    initialRoute={{ name: 'login', component: Login, afterLogin: this._afterLogin.bind(this)}}
+                    configureScene={(route) => {
+                            return Navigator.SceneConfigs.FloatFromRight;
+                        }}
+                    renderScene={(route, navigator) => {
+                            let Component = route.component;
+                            return <Component {...route.params} navigator={navigator} />;
+                        }}
+                />
+            );
         }
 
         return (

@@ -1,19 +1,18 @@
 import {StyleSheet, AsyncStorage, Dimensions, View, Text, TextInput, AlertIOS} from 'react-native';
 import React, {Component} from 'react';
 import Button from 'react-native-button';
-var CountDown = require('react-native-sk-countdown').CountDownText;
 
 import request from '../common/request';
 import config from '../common/config';
+import Register from './Register';
+import Forget from './Forget';
 
-export default class Account extends Component {
+export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            phoneNumber: '',
-            verifyCode: '',
-            codeSent: false,
-            countingDone: false
+            nameOrAddress: '',
+            password: '',
         }
     }
 
@@ -22,54 +21,31 @@ export default class Account extends Component {
             <View style={styles.container}>
                 <View style={styles.signup_box}>
                     <Text style={styles.title}>快速登录</Text>
-                    <TextInput placeholder="输入手机号" autoCaptialize={"none"}
+                    <TextInput placeholder="用户名或邮箱" autoCaptialize={"none"}
                                autoCorrect={false} keyboardType={"number-pad"}
                                style={styles.input_field}
                                onChangeText={(text) => {
                                    this.setState({
-                                       phoneNumber: text
+                                       nameOrAddress: text
                                    });
-                               }}/>
-                    {
-                        this.state.codeSent ?
-                            <View style={styles.verify_code_box}>
-                                <TextInput placeholder="输入验证码" autoCaptialize={"none"}
-                                           autoCorrect={false} keyboardType={"number-pad"}
-                                           style={styles.verify_input_field}
-                                           onChangeText={(text) => {
-                                    this.setState({
-                                        verifyCode: text
-                                    });
-                                }}/>
-                                {
-                                    this.state.countingDone ?
-                                        <Button style={styles.count_btn}
-                                                onPress={this._sendVerifyCode.bind(this)}>
-                                            获取验证码
-                                        </Button> :
-                                        <CountDown style={styles.count_btn}
-                                                   countType='seconds'
-                                                   auto={true}
-                                                   afterEnd={this._countingDone.bind(this)}
-                                                   timeLeft={60}
-                                                   step={-1}
-                                                   startText='获取验证码'
-                                                   endText='获取验证码'
-                                                   intervalText={(sec) => "剩余" + sec + "秒"}>
-                                        </CountDown>
-                                }
-                            </View> :
-                            null
-                    }
-                    {
-                        this.state.codeSent ?
-                            <Button style={styles.btn} onPress={this._submit.bind(this)}>
-                                登录
-                            </Button> :
-                            <Button style={styles.btn} onPress={this._sendVerifyCode.bind(this)}>
-                                获取验证码
-                            </Button>
-                    }
+                               }}
+                    />
+                    <TextInput placeholder="密码" autoCaptialize={"none"} secureTextEntry={true}
+                               autoCorrect={false} keyboardType={"number-pad"}
+                               style={[styles.input_field, styles.margin_top]}
+                               onChangeText={(text) => {
+                                   this.setState({
+                                       password: text
+                                   });
+                               }}
+                    />
+                    <Button style={styles.btn} onPress={this._submit.bind(this)}>
+                        登录
+                    </Button>
+                    <View style={[styles.margin_top, styles.text_box]}>
+                        <Text style={styles.text} onPress={this._gotoView.bind(this, 'register')}>注册</Text>
+                        <Text style={styles.text} onPress={this._gotoView.bind(this, 'forget')}>忘记密码</Text>
+                    </View>
                 </View>
             </View>
         );
@@ -77,16 +53,22 @@ export default class Account extends Component {
 
     _submit() {
         let me = this;
-        let phoneNumber = this.state.phoneNumber;
-        let verifyCode = this.state.verifyCode;
+        let nameOrAddress = this.state.nameOrAddress;
+        let password = this.state.password;
 
-        if (!phoneNumber || !verifyCode) {
-            return AlertIOS.alert('手机号或验证码不能为空!');
+        if (!nameOrAddress) {
+            AlertIOS.alert('请输入用户名或邮箱!');
+            return;
+        }
+
+        if (!password) {
+            AlertIOS.alert('请输入密码!');
+            return;
         }
 
         let body = {
-            phoneNumber: phoneNumber,
-            verifyCode: verifyCode
+            nameOrAddress: nameOrAddress,
+            password: password
         };
         let verifyUrl = config.api.base + config.api.verify;
 
@@ -101,40 +83,22 @@ export default class Account extends Component {
         });
     }
 
-    _sendVerifyCode() {
-        let me = this;
-        let phoneNumber = this.state.phoneNumber;
+    _gotoView(name) {
+        const {navigator} = this.props;
 
-        if (!phoneNumber) {
-            return AlertIOS.alert('手机号不能为空!');
-        }
+        if (navigator) {
+            let info = {
+                name : name
+            };
 
-        let body = {
-            phoneNumber: phoneNumber
-        };
-        let signupUrl = config.api.base + config.api.signup;
-
-        request.post(signupUrl, body).then((data) => {
-            if (data && data.success) {
-                me._showVerifyCode();
-            } else {
-                AlertIOS.alert('获取验证码失败,请检查手机号!');
+            if (name === 'register') {
+                info.component = Register;
+            } else if (name === 'forget') {
+                info.component = Forget;
             }
-        }).catch((error) => {
-            AlertIOS.alert('获取验证码失败,请检查网络!');
-        });
-    }
 
-    _showVerifyCode() {
-        this.setState({
-            codeSent: true
-        })
-    }
-
-    _countingDone() {
-        this.setState({
-            countingDone: true
-        })
+            navigator.push(info);
+        }
     }
 }
 
@@ -144,6 +108,9 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
         backgroundColor: '#f9f9f9',
+    },
+    margin_top: {
+        marginTop: 10
     },
     signup_box: {
         marginTop: 30,
@@ -162,15 +129,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 4
     },
-    verify_input_field: {
-        height: 40,
-        width: width - 130,
-        padding: 5,
-        color: '#666',
-        fontSize: 16,
-        backgroundColor: '#fff',
-        borderRadius: 4
-    },
     btn: {
         padding: 10,
         marginTop: 10,
@@ -180,22 +138,12 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         color: '#ee735c'
     },
-    verify_code_box: {
-        marginTop: 10,
+    text_box: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        padding: 20
     },
-    count_btn: {
-        width: 100,
-        height: 40,
-        padding: 10,
-        marginLeft: 8,
-        backgroundColor: '#ee735c',
-        borderColor: '#ee735c',
-        textAlign: 'center',
-        fontWeight: '600',
-        fontSize: 15,
-        color: '#fff',
-        borderRadius: 4
+    text: {
+        fontSize: 16
     }
 });
