@@ -154,7 +154,14 @@ export default class Register extends Component {
     }
 
     _sendVerifyCode() {
-
+        let url = config.api.host + config.api.user.sendVerifyCode;
+        request.get(url, {
+            mail: this.state.mail
+        }).then((data) => {
+            if (data && data.status) {
+                this._showToast('success');
+            }
+        })
     }
 
     _countingDone() {

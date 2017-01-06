@@ -38,7 +38,8 @@ module.exports = {
 
         host: 'http://localhost:9999/',
         user: {
-            checkRegisterInfo: 'user'
+            checkRegisterInfo: 'user',
+            sendVerifyCode: 'user/code'
         },
         good: {
             list: 'goods',
