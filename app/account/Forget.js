@@ -29,8 +29,7 @@ export default class Forget extends Component {
                         </TouchableOpacity>
                         <Text style={styles.title}>重置密码</Text>
                     </View>
-                    <TextInput placeholder="用户名或邮箱" autoCaptialize={"none"}
-                               autoCorrect={false} keyboardType={"number-pad"}
+                    <TextInput placeholder="用户名或邮箱" autoCaptialize={"none"} autoCorrect={false}
                                style={styles.input_field}
                                onChangeText={(text) => {
                                    this.setState({
@@ -39,8 +38,7 @@ export default class Forget extends Component {
                                }}
                     />
                     <TextInput placeholder="清输入新密码" autoCaptialize={"none"} secureTextEntry={true}
-                               autoCorrect={false} keyboardType={"number-pad"}
-                               style={[styles.input_field, styles.margin_top]}
+                               autoCorrect={false} style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
                                    this.setState({
                                        password: text
@@ -48,8 +46,7 @@ export default class Forget extends Component {
                                }}
                     />
                     <TextInput placeholder="请确认新密码" autoCaptialize={"none"} secureTextEntry={true}
-                               autoCorrect={false} keyboardType={"number-pad"}
-                               style={[styles.input_field, styles.margin_top]}
+                               autoCorrect={false} style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
                                    this.setState({
                                        repassword: text
@@ -57,8 +54,7 @@ export default class Forget extends Component {
                                }}
                     />
                     <View style={styles.verify_code_box}>
-                        <TextInput placeholder="输入验证码" autoCaptialize={"none"}
-                                   autoCorrect={false} keyboardType={"number-pad"}
+                        <TextInput placeholder="输入验证码" autoCaptialize={"none"} autoCorrect={false}
                                    style={styles.verify_input_field}
                                    onChangeText={(text) => {
                                         this.setState({

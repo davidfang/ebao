@@ -21,8 +21,7 @@ export default class Login extends Component {
             <View style={styles.container}>
                 <View style={styles.signup_box}>
                     <Text style={styles.title}>快速登录</Text>
-                    <TextInput placeholder="用户名或邮箱" autoCaptialize={"none"}
-                               autoCorrect={false} keyboardType={"number-pad"}
+                    <TextInput placeholder="用户名或邮箱" autoCaptialize={"none"} autoCorrect={false}
                                style={styles.input_field}
                                onChangeText={(text) => {
                                    this.setState({
@@ -31,8 +30,7 @@ export default class Login extends Component {
                                }}
                     />
                     <TextInput placeholder="密码" autoCaptialize={"none"} secureTextEntry={true}
-                               autoCorrect={false} keyboardType={"number-pad"}
-                               style={[styles.input_field, styles.margin_top]}
+                               autoCorrect={false} style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
                                    this.setState({
                                        password: text

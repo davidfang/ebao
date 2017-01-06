@@ -17,6 +17,8 @@ export default class Register extends Component {
             password: '',
             repassword: '',
             verifyCode: '',
+
+            hasSent: false,
             countingDone: false
         }
     }
@@ -32,8 +34,7 @@ export default class Register extends Component {
                         </TouchableOpacity>
                         <Text style={styles.title}>注册</Text>
                     </View>
-                    <TextInput placeholder="请输入邮箱" autoCaptialize={"none"}
-                               autoCorrect={false} keyboardType={"number-pad"}
+                    <TextInput placeholder="请输入邮箱" autoCaptialize={"none"} autoCorrect={false}
                                style={styles.input_field}
                                onChangeText={(text) => {
                                     this.setState({
@@ -43,8 +44,7 @@ export default class Register extends Component {
                                     });
                                }}
                     />
-                    <TextInput placeholder="请输入用户名" autoCaptialize={"none"}
-                               autoCorrect={false} keyboardType={"number-pad"}
+                    <TextInput placeholder="请输入用户名" autoCaptialize={"none"} autoCorrect={false}
                                style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
                                     this.setState({
@@ -54,21 +54,23 @@ export default class Register extends Component {
                                     });
                                }}
                     />
-                    <TextInput placeholder="清输入密码" autoCaptialize={"none"} secureTextEntry={true}
-                               autoCorrect={false} keyboardType={"number-pad"}
-                               style={[styles.input_field, styles.margin_top]}
+                    <TextInput placeholder="请输入密码(8-15位数字与字母)" autoCaptialize={"none"} secureTextEntry={true}
+                               autoCorrect={false} style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
                                    this.setState({
                                        password: text
+                                   }, () => {
+                                       this._checkRegisterInfo('password');
                                    });
                                }}
                     />
                     <TextInput placeholder="请确认密码" autoCaptialize={"none"} secureTextEntry={true}
-                               autoCorrect={false} keyboardType={"number-pad"}
-                               style={[styles.input_field, styles.margin_top]}
+                               autoCorrect={false} style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
                                    this.setState({
                                        repassword: text
+                                   }, () => {
+                                       this._checkRegisterInfo('repassword');
                                    });
                                }}
                     />
@@ -82,16 +84,9 @@ export default class Register extends Component {
                                         });
                                     }}
                         />
-                        {
-                            this.state.countingDone ?
-                                <Button style={styles.count_btn}
-                                        onPress={this._sendVerifyCode.bind(this)}>
-                                    获取验证码
-                                </Button> :
-                                <View style={styles.count_btn}>
-                                    <Text style={styles.count_btn_text}>获取验证码</Text>
-                                </View>
-                        }
+                        <Button style={styles.count_btn} onPress={this._sendVerifyCode.bind(this)}>
+                            获取验证码
+                        </Button>
                     </View>
                     <Button style={styles.register_btn} onPress={this._submit.bind(this)}>
                         注册
@@ -111,34 +106,58 @@ export default class Register extends Component {
 
     _checkRegisterInfo(type) {
         clearTimeout(this.checkTimer);
-        this.checkTimer = setTimeout(() => {
-            let url = config.api.host + config.api.user.checkRegisterInfo;
-            let params = {};
-            if (type === 'mail') {
-                params.mail = this.state.mail;
-            } else if (type === 'username') {
-                params.username = this.state.username;
-            }
-            request.get(url, params).then((data) => {
-                if (data && !data.status) {
-                    Toast.show(data.result, {
-                        duration: Toast.durations.LONG,
-                        position: Toast.positions.CENTER,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0
-                    });
+        if (type === 'mail' || type === 'username') {
+            this.checkTimer = setTimeout(() => {
+                let url = config.api.host + config.api.user.checkRegisterInfo;
+                let params = {};
+                if (type === 'mail') {
+                    params.mail = this.state.mail;
+                } else {
+                    params.username = this.state.username;
                 }
-            })
-        }, 300);
+                request.get(url, params).then((data) => {
+                    if (data && !data.status) {
+                        this._showToast(data.result);
+                    }
+                })
+            }, 300);
+        } else if (type === 'password' || type === 'repassword') {
+            this.checkTimer = setTimeout(() => {
+                if (type === 'password' && this.state.password
+                    && !this._checkPasswordFormat(this.state.password)) {
+                    this._showToast('密码格式不正确(8-15位数字与字符)');
+                } else if (type === 'repassword') {
+                    if (this.state.repassword && !this._checkPasswordFormat(this.state.password)) {
+                        this._showToast('密码格式不正确(8-15位数字与字符)');
+                    }
+                    if (this.state.password !== this.state.repassword) {
+                        this._showToast('两次密码输入不同,请检查');
+                    }
+                }
+            }, 1000);
+        }
     }
 
-    _countingDone() {
+    _checkPasswordFormat(value) {
+        return value.match(/^[a-zA-Z0-9]{8,15}$/);
+    }
 
+    _showToast(value) {
+        Toast.show(value, {
+            duration: Toast.durations.LONG,
+            position: Toast.positions.CENTER,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0
+        });
     }
 
     _sendVerifyCode() {
+
+    }
+
+    _countingDone() {
 
     }
 
@@ -255,6 +274,8 @@ const styles = StyleSheet.create({
     count_btn: {
         width: 100,
         height: 40,
+        lineHeight: 40,
+        color: '#fff',
         backgroundColor: '#ee735c',
         borderColor: '#ee735c',
         borderRadius: 4,
