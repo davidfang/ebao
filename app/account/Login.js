@@ -11,7 +11,7 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            nameOrAddress: '',
+            nameOrMail: '',
             password: '',
         }
     }
@@ -26,7 +26,7 @@ export default class Login extends Component {
                                style={styles.input_field}
                                onChangeText={(text) => {
                                    this.setState({
-                                       nameOrAddress: text
+                                       nameOrMail: text
                                    });
                                }}
                     />
@@ -53,10 +53,10 @@ export default class Login extends Component {
 
     _submit() {
         let me = this;
-        let nameOrAddress = this.state.nameOrAddress;
+        let nameOrMail = this.state.nameOrMail;
         let password = this.state.password;
 
-        if (!nameOrAddress) {
+        if (!nameOrMail) {
             AlertIOS.alert('请输入用户名或邮箱!');
             return;
         }
@@ -67,7 +67,7 @@ export default class Login extends Component {
         }
 
         let body = {
-            nameOrAddress: nameOrAddress,
+            nameOrMail: nameOrMail,
             password: password
         };
         let verifyUrl = config.api.base + config.api.verify;

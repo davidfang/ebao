@@ -10,8 +10,11 @@ export default class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            nameOrAddress: '',
+            mail: '',
+            username: '',
             password: '',
+            repassword: '',
+            verifyCode: '',
             countingDone: false
         }
     }
@@ -32,7 +35,7 @@ export default class Register extends Component {
                                style={styles.input_field}
                                onChangeText={(text) => {
                                    this.setState({
-                                       nameOrAddress: text
+                                       mail: text
                                    });
                                }}
                     />
@@ -41,7 +44,7 @@ export default class Register extends Component {
                                style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
                                    this.setState({
-                                       nameOrAddress: text
+                                       username: text
                                    });
                                }}
                     />
@@ -59,7 +62,7 @@ export default class Register extends Component {
                                style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
                                    this.setState({
-                                       password: text
+                                       repassword: text
                                    });
                                }}
                     />

@@ -10,7 +10,7 @@ export default class Forget extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            nameOrAddress: '',
+            nameOrMail: '',
             password: '',
             repassword: '',
             verifyCode: '',
@@ -34,7 +34,7 @@ export default class Forget extends Component {
                                style={styles.input_field}
                                onChangeText={(text) => {
                                    this.setState({
-                                       nameOrAddress: text
+                                       nameOrMail: text
                                    });
                                }}
                     />
@@ -103,9 +103,9 @@ export default class Forget extends Component {
 
     _submit() {
         let me = this;
-        let {nameOrAddress, password, repassword, verifyCode} = this.state;
+        let {nameOrMail, password, repassword, verifyCode} = this.state;
 
-        if (!nameOrAddress) {
+        if (!nameOrMail) {
             AlertIOS.alert('请输入用户名或邮箱!');
             return;
         }
