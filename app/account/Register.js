@@ -2,6 +2,7 @@ import {StyleSheet, AsyncStorage, Dimensions, View, Text, TextInput, AlertIOS, T
 import React, {Component} from 'react';
 import Button from 'react-native-button';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Toast from 'react-native-root-toast';
 
 import request from '../common/request';
 import config from '../common/config';
@@ -9,6 +10,7 @@ import config from '../common/config';
 export default class Register extends Component {
     constructor(props) {
         super(props);
+        this.checkTimer = null;
         this.state = {
             mail: '',
             username: '',
@@ -34,18 +36,22 @@ export default class Register extends Component {
                                autoCorrect={false} keyboardType={"number-pad"}
                                style={styles.input_field}
                                onChangeText={(text) => {
-                                   this.setState({
-                                       mail: text
-                                   });
+                                    this.setState({
+                                        mail: text
+                                    }, () => {
+                                        this._checkRegisterInfo('mail');
+                                    });
                                }}
                     />
                     <TextInput placeholder="请输入用户名" autoCaptialize={"none"}
                                autoCorrect={false} keyboardType={"number-pad"}
                                style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
-                                   this.setState({
-                                       username: text
-                                   });
+                                    this.setState({
+                                        username: text
+                                    }, () => {
+                                        this._checkRegisterInfo('username');
+                                    });
                                }}
                     />
                     <TextInput placeholder="清输入密码" autoCaptialize={"none"} secureTextEntry={true}
@@ -101,6 +107,31 @@ export default class Register extends Component {
         if (navigator) {
             navigator.pop();
         }
+    }
+
+    _checkRegisterInfo(type) {
+        clearTimeout(this.checkTimer);
+        this.checkTimer = setTimeout(() => {
+            let url = config.api.host + config.api.user.checkRegisterInfo;
+            let params = {};
+            if (type === 'mail') {
+                params.mail = this.state.mail;
+            } else if (type === 'username') {
+                params.username = this.state.username;
+            }
+            request.get(url, params).then((data) => {
+                if (data && !data.status) {
+                    Toast.show(data.result, {
+                        duration: Toast.durations.LONG,
+                        position: Toast.positions.CENTER,
+                        shadow: true,
+                        animation: true,
+                        hideOnPress: true,
+                        delay: 0
+                    });
+                }
+            })
+        }, 300);
     }
 
     _countingDone() {

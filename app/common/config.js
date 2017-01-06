@@ -37,6 +37,9 @@ module.exports = {
         signature: '/api/signatrue',
 
         host: 'http://localhost:9999/',
+        user: {
+            checkRegisterInfo: 'user'
+        },
         good: {
             list: 'goods',
             publish: 'good'
