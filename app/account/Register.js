@@ -132,13 +132,13 @@ export default class Register extends Component {
             this.checkTimer = setTimeout(() => {
                 if (type === 'password' && this.state.password
                     && !Service.checkPasswordFormat(this.state.password)) {
-                    Service.showToast('密码格式不正确(8-15位数字与字符)');
+                    Service.showToast('密码格式不正确(8-15位数字与字符),请检查');
                 } else if (type === 'repassword') {
                     if (this.state.repassword && !Service.checkPasswordFormat(this.state.password)) {
-                        Service.showToast('密码格式不正确(8-15位数字与字符)');
+                        Service.showToast('密码格式不正确(8-15位数字与字符),请检查)');
                     }
                     if (this.state.password !== this.state.repassword) {
-                        Service.showToast('两次密码输入不同,请检查');
+                        Service.showToast('两次输入密码不一致,请检查');
                     }
                 }
             }, 1000);
@@ -146,8 +146,20 @@ export default class Register extends Component {
     }
 
     _sendVerifyCode() {
+        let {mail, username} = this.state;
+
+        if (!mail || !username) {
+            Service.showToast('邮箱和用户名必填');
+            return;
+        }
+        if (!Service.checkMailFormat(mail)) {
+            Service.showToast('邮箱格式错误,请检查');
+            return;
+        }
+
         request.get(config.api.host + config.api.user.sendVerifyCode, {
-            mail: this.state.mail
+            mail: this.state.mail,
+            username: this.state.username
         }).then((data) => {
             if (data && data.status) {
                 Service.showToast(data.result);
@@ -179,33 +191,49 @@ export default class Register extends Component {
 
     _submit() {
         let me = this;
-        let nameOrAddress = this.state.nameOrAddress;
+        let mail = this.state.mail;
+        let username = this.state.username;
         let password = this.state.password;
+        let repassword = this.state.repassword;
+        let verifyCode = this.state.verifyCode;
 
-        if (!nameOrAddress) {
-            AlertIOS.alert('请输入用户名或邮箱!');
+        if (!mail || !username || !password || !repassword || !verifyCode) {
+            Service.showToast('请输入所有必填信息');
+            return;
+        }
+        if (!Service.checkMailFormat(mail)) {
+            Service.showToast('邮箱格式错误,请检查');
+            return;
+        }
+        if (!Service.checkPasswordFormat(password) || !Service.checkPasswordFormat(repassword)) {
+            Service.showToast('密码格式不正确(8-15位数字与字符),请检查');
+            return;
+        } else if (password !== repassword) {
+            Service.showToast('两次输入密码不一致,请检查');
             return;
         }
 
-        if (!password) {
-            AlertIOS.alert('请输入密码!');
-            return;
-        }
-
-        let body = {
-            nameOrAddress: nameOrAddress,
-            password: password
-        };
-        let verifyUrl = config.api.base + config.api.verify;
-
-        request.post(verifyUrl, body).then((data) => {
-            if (data && data.success) {
-                me.props.afterLogin(data.data);
+        let url = config.api.host + config.api.user.checkRegisterInfo;
+        Service.checkRepeat(url, {
+            mail: mail
+        }).then((data) => {
+            if (data && data.status) {
+                return Service.checkRepeat(url, {
+                    username: username
+                })
             } else {
-                AlertIOS.alert('获取验证码失败,请检查手机号!');
+                Service.showToast(data.result);
             }
-        }).catch((error) => {
-            AlertIOS.alert('获取验证码失败,请检查网络!');
+        }).then((data) => {
+            if (data && data.status) {
+                if (verifyCode === data.result.verifyCode) {
+                    User.update({username: username}, {password: password});
+                } else {
+                    Service.showToast('验证码输入错误');
+                }
+            } else {
+                Service.showToast(data.result);
+            }
         });
     }
 }
