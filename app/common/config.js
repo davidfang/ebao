@@ -45,5 +45,8 @@ module.exports = {
             list: 'goods',
             publish: 'good'
         }
-    }
+    },
+
+    countdownSeconds: 120,
+    
 }

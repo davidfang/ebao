@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import request from '../common/request';
 import config from '../common/config';
+import Service from '../common/service';
 
 export default class Forget extends Component {
     constructor(props) {
@@ -14,7 +15,9 @@ export default class Forget extends Component {
             password: '',
             repassword: '',
             verifyCode: '',
-            countingDone: false
+
+            countdowning: false,
+            leftSeconds: config.countdownSeconds
         }
     }
 
@@ -37,7 +40,7 @@ export default class Forget extends Component {
                                    });
                                }}
                     />
-                    <TextInput placeholder="清输入新密码" autoCaptialize={"none"} secureTextEntry={true}
+                    <TextInput placeholder="清输入新密码(8-15位数字与字母)" autoCaptialize={"none"} secureTextEntry={true}
                                autoCorrect={false} style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
                                    this.setState({
@@ -63,14 +66,13 @@ export default class Forget extends Component {
                                     }}
                         />
                         {
-                            this.state.countingDone ?
-                                <Button style={styles.count_btn}
-                                        onPress={this._sendVerifyCode.bind(this)}>
-                                    获取验证码
+                            this.state.countdowning ?
+                                <Button style={styles.send_btn}>
+                                    剩余{this.state.leftSeconds}秒
                                 </Button> :
-                                <View style={styles.count_btn}>
-                                    <Text style={styles.count_btn_text}>获取验证码</Text>
-                                </View>
+                                <Button style={styles.send_btn} onPress={this._sendVerifyCode.bind(this)}>
+                                    获取验证码
+                                </Button>
                         }
                     </View>
                     <Button style={styles.register_btn} onPress={this._submit.bind(this)}>
@@ -94,7 +96,7 @@ export default class Forget extends Component {
     }
 
     _sendVerifyCode() {
-
+        Service.showToast('发送验证码');
     }
 
     _submit() {
@@ -214,19 +216,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    count_btn: {
+    send_btn: {
         width: 100,
         height: 40,
+        lineHeight: 40,
+        color: '#fff',
         backgroundColor: '#ee735c',
         borderColor: '#ee735c',
         borderRadius: 4,
         overflow: 'hidden',
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    count_btn_text: {
-        fontWeight: '600',
-        fontSize: 16,
-        color: '#fff'
     }
 });
