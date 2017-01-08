@@ -130,30 +130,28 @@ export default class Register extends Component {
         clearTimeout(this.checkTimer);
         this.checkTimer = setTimeout(() => {
             if (type === 'mail') {
-                if (!Service.checkMailFormat(this.state.mail)) {
+                if (this.state.mail && !Service.checkMailFormat(this.state.mail)) {
                     Service.showToast('邮箱格式错误,请检查');
                     return;
                 }
 
-                let url = config.api.host + config.api.user.getUserByMail;
-                let params = {
+                request.get(config.api.host + config.api.user.getUserByMail, {
                     address: this.state.mail
-                };
-
-                request.get(url, params).then((data) => {
+                }).then((data) => {
                     if (data && data.status) {
                         Service.showToast('该邮箱已被注册,请重新输入');
                     }
                 });
             } else if (type === 'username') {
-                let url = config.api.host + config.api.user.getUserByName;
-                let params = {
+                /**
+                 * 不知道为什么,这种方式与下面submit的方式都可以,这种方式不好理解,restify的路由规则,
+                 * 试过之后觉得这种方式可以的一个前提的路由为user/name/,user/name就不行
+                 */
+                request.get(config.api.host + config.api.user.getUserByName, {
                     username: this.state.username
-                };
-
-                request.get(url, params).then((data) => {
+                }).then((data) => {
                     if (data && data.status) {
-                        Service.showToast('该邮箱已被注册,请重新输入');
+                        Service.showToast('该用户名已被注册,请重新输入');
                     }
                 });
             } else if (type === 'password') {
@@ -213,10 +211,6 @@ export default class Register extends Component {
         })
     }
 
-    _countingDone() {
-
-    }
-
     _submit() {
         let me = this;
         let {mail, username, password, repassword, verifyCode} = this.state;
@@ -238,7 +232,7 @@ export default class Register extends Component {
         }
 
         request.get(config.api.host + config.api.user.getUserByMail, {
-            mail: mail
+            address: mail
         }).then((data) => {
             if (data) {
                 if (data.status) {

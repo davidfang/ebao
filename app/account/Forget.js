@@ -10,6 +10,10 @@ import Service from '../common/service';
 export default class Forget extends Component {
     constructor(props) {
         super(props);
+        this.checkTimer = null;
+        this.countdownTimer = null;
+        this.mail = '';
+
         this.state = {
             nameOrMail: '',
             password: '',
@@ -36,24 +40,30 @@ export default class Forget extends Component {
                                style={styles.input_field}
                                onChangeText={(text) => {
                                    this.setState({
-                                       nameOrMail: text
-                                   });
+                                        nameOrMail: text
+                                    }, () => {
+                                        this._checkRegisterInfo('nameOrMail');
+                                    });
                                }}
                     />
                     <TextInput placeholder="清输入新密码(8-15位数字与字母)" autoCaptialize={"none"} secureTextEntry={true}
                                autoCorrect={false} style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
                                    this.setState({
-                                       password: text
-                                   });
+                                        password: text
+                                    }, () => {
+                                        this._checkRegisterInfo('password');
+                                    });
                                }}
                     />
                     <TextInput placeholder="请确认新密码" autoCaptialize={"none"} secureTextEntry={true}
                                autoCorrect={false} style={[styles.input_field, styles.margin_top]}
                                onChangeText={(text) => {
                                    this.setState({
-                                       repassword: text
-                                   });
+                                        repassword: text
+                                    }, () => {
+                                        this._checkRegisterInfo('repassword');
+                                    });
                                }}
                     />
                     <View style={styles.verify_code_box}>
@@ -86,55 +96,154 @@ export default class Forget extends Component {
     _goBack() {
         const {navigator} = this.props;
 
+        clearInterval(this.countdownTimer);
+
         if (navigator) {
             navigator.pop();
         }
     }
 
-    _countingDone() {
+    _checkRegisterInfo(type) {
+        let nameOrMail = this.state.nameOrMail;
+        let delay = 800;
+        if (type === 'password' || type === 'repassword') {
+            delay = 1500;
+        }
 
+        //TODO
+
+        clearTimeout(this.checkTimer);
+        this.checkTimer = setTimeout(() => {
+            if (type === 'nameOrMail') {
+                request.get(config.api.host + config.api.user.getUserByMail, {
+                    address: nameOrMail
+                }).then((data) => {
+                    if (data) {
+                        if (data.status) {
+                            this.mail = nameOrMail;
+                        } else {
+                            return request.get(config.api.host + config.api.user.getUserByName + nameOrMail);
+                        }
+                    }
+                }).then((data) => {
+                    if (data) {
+                        if (data.status) {
+                            this.mail = data.result.mail;
+                        } else {
+                            Service.showToast('用户不存在,请检查');
+                        }
+                    }
+                })
+            } else if (type === 'password') {
+                if (this.state.password && !Service.checkPasswordFormat(this.state.password)) {
+                    Service.showToast('密码格式不正确(8-15位数字与字符),请检查');
+                }
+            } else if (type === 'repassword') {
+                if (this.state.repassword && !Service.checkPasswordFormat(this.state.password)) {
+                    Service.showToast('确认密码格式不正确(8-15位数字与字符),请检查)');
+                }
+                if (this.state.password !== this.state.repassword) {
+                    Service.showToast('两次输入密码不一致,请检查');
+                }
+            }
+        }, delay);
     }
 
     _sendVerifyCode() {
-        Service.showToast('发送验证码');
+        let {nameOrMail} = this.state;
+        if (!nameOrMail) {
+            Service.showToast('邮箱或用户名必填');
+            return;
+        }
+
+        let delay = 1500;
+
+        request.get(config.api.host + config.api.user.sendVerifyCode, {
+            mail: this.mail
+        }).then((data) => {
+            if (data && data.status) {
+                Service.showToast('验证码已经发送到您的邮箱');
+                AsyncStorage.setItem('VerifyCode', data.result);
+
+                this.setState({
+                    countdowning: true
+                }, () => {
+                    clearInterval(this.countdownTimer);
+                    this.countdownTimer = setInterval(() => {
+                        this.setState({
+                            leftSeconds: this.state.leftSeconds - 1
+                        }, () => {
+                            if (this.state.leftSeconds === 0) {
+                                clearInterval(this.countdownTimer);
+                                this.setState({
+                                    countdowning: false,
+                                    leftSeconds: config.countdownSeconds
+                                });
+                            }
+                        })
+                    }, delay);
+                })
+            }
+        })
     }
 
     _submit() {
         let me = this;
-        let {nameOrMail, password, repassword, verifyCode} = this.state;
+        let {mail, username, password, repassword, verifyCode} = this.state;
 
-        if (!nameOrMail) {
-            AlertIOS.alert('请输入用户名或邮箱!');
+        if (!mail || !username || !password || !repassword || !verifyCode) {
+            Service.showToast('请输入所有必填信息');
+            return;
+        }
+        if (!Service.checkMailFormat(mail)) {
+            Service.showToast('邮箱格式错误,请检查');
+            return;
+        }
+        if (!Service.checkPasswordFormat(password) || !Service.checkPasswordFormat(repassword)) {
+            Service.showToast('密码格式不正确(8-15位数字与字符),请检查');
+            return;
+        } else if (password !== repassword) {
+            Service.showToast('两次输入密码不一致,请检查');
             return;
         }
 
-        if (!password) {
-            AlertIOS.alert('请输入新密码!');
-            return;
-        }
-        if (!repassword) {
-            AlertIOS.alert('请确认新密码!');
-            return;
-        }
-        if (password !== repassword) {
-            AlertIOS.alert('两次输入的密码不一致!');
-            return;
-        }
-
-        let body = {
-            nameOrAddress: nameOrAddress,
-            password: password
-        };
-        let verifyUrl = config.api.base + config.api.verify;
-
-        request.post(verifyUrl, body).then((data) => {
-            if (data && data.success) {
-                me.props.afterLogin(data.data);
-            } else {
-                AlertIOS.alert('获取验证码失败,请检查手机号!');
+        request.get(config.api.host + config.api.user.getUserByMail, {
+            mail: mail
+        }).then((data) => {
+            if (data) {
+                if (data.status) {
+                    Service.showToast('该邮箱已被注册,请重新输入');
+                } else {
+                    return request.get(config.api.host + config.api.user.getUserByName + username);
+                }
             }
-        }).catch((error) => {
-            AlertIOS.alert('获取验证码失败,请检查网络!');
+        }).then((data) => {
+            if (data) {
+                if (data.status) {
+                    Service.showToast('该用户名已被注册,请重新输入');
+                } else {
+                    AsyncStorage.getItem('VerifyCode').then((savedVerifyCode) => {
+                        if (verifyCode === savedVerifyCode) {
+                            request.put(config.api.host + config.api.user.register, {
+                                mail: mail,
+                                username: username,
+                                password: password
+                            }).then((data) => {
+                                if (data && data.status) {
+                                    Service.showToast('注册成功,请登录');
+                                    this.setState({
+                                        hasSubmitted: true
+                                    });
+
+                                    setTimeout(() => {
+                                        this._goBack()
+                                    }, 300);
+                                }
+                            })
+                        }
+                    })
+                }
+            }
         });
     }
 }
