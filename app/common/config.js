@@ -38,8 +38,10 @@ module.exports = {
 
         host: 'http://localhost:9999/',
         user: {
-            checkRegisterInfo: 'user',
-            sendVerifyCode: 'user/code'
+            getUserByMail: 'user/mail',
+            getUserByName: 'user/name/',
+            sendVerifyCode: 'user/code',
+            register: 'user'
         },
         good: {
             list: 'goods',
@@ -47,6 +49,6 @@ module.exports = {
         }
     },
 
-    countdownSeconds: 120,
-    
+    countdownSeconds: 60,
+
 }

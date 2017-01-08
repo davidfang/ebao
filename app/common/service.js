@@ -21,7 +21,3 @@ module.exports.checkPasswordFormat = function (password) {
 module.exports.checkMailFormat = function (mail) {
     return mail.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/);
 };
-
-module.exports.checkRepeat = function (url, params) {
-    return request.get(url, params);
-};

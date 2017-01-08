@@ -20,7 +20,9 @@ export default class Register extends Component {
             verifyCode: '',
 
             countdowning: false,
-            leftSeconds: config.countdownSeconds
+            leftSeconds: config.countdownSeconds,
+
+            hasSubmitted: false
         }
     }
 
@@ -95,9 +97,15 @@ export default class Register extends Component {
                                 </Button>
                         }
                     </View>
-                    <Button style={styles.register_btn} onPress={this._submit.bind(this)}>
-                        注册
-                    </Button>
+                    {
+                        this.state.hasSubmitted ?
+                            <Button style={styles.register_btn_gray}>
+                                注册
+                            </Button> :
+                            <Button style={styles.register_btn} onPress={this._submit.bind(this)}>
+                                注册
+                            </Button>
+                    }
                 </View>
             </View>
         );
@@ -106,48 +114,65 @@ export default class Register extends Component {
     _goBack() {
         const {navigator} = this.props;
 
+        clearInterval(this.countdownTimer);
+
         if (navigator) {
             navigator.pop();
         }
     }
 
     _checkRegisterInfo(type) {
-        clearTimeout(this.checkTimer);
-        if (type === 'mail' || type === 'username') {
-            this.checkTimer = setTimeout(() => {
-                let url = config.api.host + config.api.user.checkRegisterInfo;
-                let params = {};
-                if (type === 'mail') {
-                    params.mail = this.state.mail;
-                } else {
-                    params.username = this.state.username;
-                }
-                request.get(url, params).then((data) => {
-                    if (data && !data.status) {
-                        Service.showToast(data.result);
-                    }
-                })
-            }, 300);
-        } else if (type === 'password' || type === 'repassword') {
-            this.checkTimer = setTimeout(() => {
-                if (type === 'password' && this.state.password
-                    && !Service.checkPasswordFormat(this.state.password)) {
-                    Service.showToast('密码格式不正确(8-15位数字与字符),请检查');
-                } else if (type === 'repassword') {
-                    if (this.state.repassword && !Service.checkPasswordFormat(this.state.password)) {
-                        Service.showToast('密码格式不正确(8-15位数字与字符),请检查)');
-                    }
-                    if (this.state.password !== this.state.repassword) {
-                        Service.showToast('两次输入密码不一致,请检查');
-                    }
-                }
-            }, 1000);
+        let delay = 800;
+        if (type === 'password' || type === 'repassword') {
+            delay = 1500;
         }
+
+        clearTimeout(this.checkTimer);
+        this.checkTimer = setTimeout(() => {
+            if (type === 'mail') {
+                if (!Service.checkMailFormat(this.state.mail)) {
+                    Service.showToast('邮箱格式错误,请检查');
+                    return;
+                }
+
+                let url = config.api.host + config.api.user.getUserByMail;
+                let params = {
+                    address: this.state.mail
+                };
+
+                request.get(url, params).then((data) => {
+                    if (data && data.status) {
+                        Service.showToast('该邮箱已被注册,请重新输入');
+                    }
+                });
+            } else if (type === 'username') {
+                let url = config.api.host + config.api.user.getUserByName;
+                let params = {
+                    username: this.state.username
+                };
+
+                request.get(url, params).then((data) => {
+                    if (data && data.status) {
+                        Service.showToast('该邮箱已被注册,请重新输入');
+                    }
+                });
+            } else if (type === 'password') {
+                if (this.state.password && !Service.checkPasswordFormat(this.state.password)) {
+                    Service.showToast('密码格式不正确(8-15位数字与字符),请检查');
+                }
+            } else if (type === 'repassword') {
+                if (this.state.repassword && !Service.checkPasswordFormat(this.state.password)) {
+                    Service.showToast('确认密码格式不正确(8-15位数字与字符),请检查)');
+                }
+                if (this.state.password !== this.state.repassword) {
+                    Service.showToast('两次输入密码不一致,请检查');
+                }
+            }
+        }, delay);
     }
 
     _sendVerifyCode() {
         let {mail, username} = this.state;
-
         if (!mail || !username) {
             Service.showToast('邮箱和用户名必填');
             return;
@@ -157,12 +182,15 @@ export default class Register extends Component {
             return;
         }
 
+        let delay = 1500;
+
         request.get(config.api.host + config.api.user.sendVerifyCode, {
-            mail: this.state.mail,
-            username: this.state.username
+            mail: this.state.mail
         }).then((data) => {
             if (data && data.status) {
-                Service.showToast(data.result);
+                Service.showToast('验证码已经发送到您的邮箱');
+                AsyncStorage.setItem('VerifyCode', data.result);
+
                 this.setState({
                     countdowning: true
                 }, () => {
@@ -179,7 +207,7 @@ export default class Register extends Component {
                                 });
                             }
                         })
-                    }, 1000)
+                    }, delay);
                 })
             }
         })
@@ -191,11 +219,7 @@ export default class Register extends Component {
 
     _submit() {
         let me = this;
-        let mail = this.state.mail;
-        let username = this.state.username;
-        let password = this.state.password;
-        let repassword = this.state.repassword;
-        let verifyCode = this.state.verifyCode;
+        let {mail, username, password, repassword, verifyCode} = this.state;
 
         if (!mail || !username || !password || !repassword || !verifyCode) {
             Service.showToast('请输入所有必填信息');
@@ -213,26 +237,42 @@ export default class Register extends Component {
             return;
         }
 
-        let url = config.api.host + config.api.user.checkRegisterInfo;
-        Service.checkRepeat(url, {
+        request.get(config.api.host + config.api.user.getUserByMail, {
             mail: mail
         }).then((data) => {
-            if (data && data.status) {
-                return Service.checkRepeat(url, {
-                    username: username
-                })
-            } else {
-                Service.showToast(data.result);
+            if (data) {
+                if (data.status) {
+                    Service.showToast('该邮箱已被注册,请重新输入');
+                } else {
+                    return request.get(config.api.host + config.api.user.getUserByName + username);
+                }
             }
         }).then((data) => {
-            if (data && data.status) {
-                if (verifyCode === data.result.verifyCode) {
-                    User.update({username: username}, {password: password});
+            if (data) {
+                if (data.status) {
+                    Service.showToast('该用户名已被注册,请重新输入');
                 } else {
-                    Service.showToast('验证码输入错误');
+                    AsyncStorage.getItem('VerifyCode').then((savedVerifyCode) => {
+                        if (verifyCode === savedVerifyCode) {
+                            request.put(config.api.host + config.api.user.register, {
+                                mail: mail,
+                                username: username,
+                                password: password
+                            }).then((data) => {
+                                if (data && data.status) {
+                                    Service.showToast('注册成功,请登录');
+                                    this.setState({
+                                        hasSubmitted: true
+                                    });
+
+                                    setTimeout(() => {
+                                        this._goBack()
+                                    }, 300);
+                                }
+                            })
+                        }
+                    })
                 }
-            } else {
-                Service.showToast(data.result);
             }
         });
     }
@@ -292,6 +332,15 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 4,
         color: '#ee735c'
+    },
+    register_btn_gray: {
+        padding: 10,
+        marginTop: 10,
+        backgroundColor: 'transparent',
+        borderColor: '#666',
+        borderWidth: 1,
+        borderRadius: 4,
+        color: '#666'
     },
     text_box: {
         flexDirection: 'row',
