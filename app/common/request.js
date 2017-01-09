@@ -22,8 +22,7 @@ request.post = function (url, body) {
     });
 
     return fetch(url, options)
-        .then((response) => response.json())
-        .then((responseJson) => Mock.mock(responseJson));
+        .then((response) => response.json());
 }
 
 

@@ -21,7 +21,9 @@ export default class Forget extends Component {
             verifyCode: '',
 
             countdowning: false,
-            leftSeconds: config.countdownSeconds
+            leftSeconds: config.countdownSeconds,
+
+            hasSubmitted: false
         }
     }
 
@@ -34,7 +36,7 @@ export default class Forget extends Component {
                             <Icon style={styles.back_icon} name="ios-arrow-back"/>
                             <Text style={styles.back_text}>返回</Text>
                         </TouchableOpacity>
-                        <Text style={styles.title}>重置密码</Text>
+                        <Text style={styles.title}>修改密码</Text>
                     </View>
                     <TextInput placeholder="用户名或邮箱" autoCaptialize={"none"} autoCorrect={false}
                                style={styles.input_field}
@@ -85,9 +87,15 @@ export default class Forget extends Component {
                                 </Button>
                         }
                     </View>
-                    <Button style={styles.register_btn} onPress={this._submit.bind(this)}>
-                        确定
-                    </Button>
+                    {
+                        this.state.hasSubmitted ?
+                            <Button style={styles.register_btn_gray}>
+                                确定
+                            </Button> :
+                            <Button style={styles.register_btn} onPress={this._submit.bind(this)}>
+                                确定
+                            </Button>
+                    }
                 </View>
             </View>
         );
@@ -104,17 +112,23 @@ export default class Forget extends Component {
     }
 
     _checkRegisterInfo(type) {
-        let nameOrMail = this.state.nameOrMail;
         let delay = 800;
+        let {nameOrMail} = this.state;
+
         if (type === 'password' || type === 'repassword') {
             delay = 1500;
         }
-
-        //TODO
+        if (type === 'nameOrMail') {
+            this.mail = '';
+        }
 
         clearTimeout(this.checkTimer);
         this.checkTimer = setTimeout(() => {
             if (type === 'nameOrMail') {
+                if (!nameOrMail) {
+                    return;
+                }
+
                 request.get(config.api.host + config.api.user.getUserByMail, {
                     address: nameOrMail
                 }).then((data) => {
@@ -150,13 +164,13 @@ export default class Forget extends Component {
     }
 
     _sendVerifyCode() {
+        let delay = 1500;
         let {nameOrMail} = this.state;
+
         if (!nameOrMail) {
             Service.showToast('邮箱或用户名必填');
             return;
         }
-
-        let delay = 1500;
 
         request.get(config.api.host + config.api.user.sendVerifyCode, {
             mail: this.mail
@@ -188,15 +202,10 @@ export default class Forget extends Component {
     }
 
     _submit() {
-        let me = this;
-        let {mail, username, password, repassword, verifyCode} = this.state;
+        let {nameOrMail, password, repassword, verifyCode} = this.state;
 
-        if (!mail || !username || !password || !repassword || !verifyCode) {
+        if (!nameOrMail || !password || !repassword || !verifyCode) {
             Service.showToast('请输入所有必填信息');
-            return;
-        }
-        if (!Service.checkMailFormat(mail)) {
-            Service.showToast('邮箱格式错误,请检查');
             return;
         }
         if (!Service.checkPasswordFormat(password) || !Service.checkPasswordFormat(repassword)) {
@@ -208,11 +217,11 @@ export default class Forget extends Component {
         }
 
         request.get(config.api.host + config.api.user.getUserByMail, {
-            mail: mail
+            address: this.mail
         }).then((data) => {
             if (data) {
                 if (data.status) {
-                    Service.showToast('该邮箱已被注册,请重新输入');
+                    this._verifyAndUpdate(data, verifyCode, password);
                 } else {
                     return request.get(config.api.host + config.api.user.getUserByName + username);
                 }
@@ -220,31 +229,34 @@ export default class Forget extends Component {
         }).then((data) => {
             if (data) {
                 if (data.status) {
-                    Service.showToast('该用户名已被注册,请重新输入');
+                    this._verifyAndUpdate(data, verifyCode, password);
                 } else {
-                    AsyncStorage.getItem('VerifyCode').then((savedVerifyCode) => {
-                        if (verifyCode === savedVerifyCode) {
-                            request.put(config.api.host + config.api.user.register, {
-                                mail: mail,
-                                username: username,
-                                password: password
-                            }).then((data) => {
-                                if (data && data.status) {
-                                    Service.showToast('注册成功,请登录');
-                                    this.setState({
-                                        hasSubmitted: true
-                                    });
-
-                                    setTimeout(() => {
-                                        this._goBack()
-                                    }, 300);
-                                }
-                            })
-                        }
-                    })
+                    Service.showToast('密码修改失败,请稍后重试');
                 }
             }
         });
+    }
+
+    _verifyAndUpdate(data, verifyCode, password) {
+        AsyncStorage.getItem('VerifyCode').then((savedVerifyCode) => {
+            if (verifyCode === savedVerifyCode) {
+                return request.post(config.api.host + config.api.user.updatePassword, {
+                    userId: data.result._id,
+                    password: password
+                });
+            }
+        }).then((data) => {
+            if (data && data.status) {
+                Service.showToast('密码修改成功,请登录');
+                this.setState({
+                    hasSubmitted: true
+                });
+
+                setTimeout(() => {
+                    this._goBack()
+                }, 300);
+            }
+        })
     }
 }
 
@@ -302,6 +314,15 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 4,
         color: '#ee735c'
+    },
+    register_btn_gray: {
+        padding: 10,
+        marginTop: 10,
+        backgroundColor: 'transparent',
+        borderColor: '#666',
+        borderWidth: 1,
+        borderRadius: 4,
+        color: '#666'
     },
     text_box: {
         flexDirection: 'row',

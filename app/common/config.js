@@ -41,7 +41,8 @@ module.exports = {
             getUserByMail: 'user/mail',
             getUserByName: 'user/name/',
             sendVerifyCode: 'user/code',
-            register: 'user'
+            register: 'user',
+            updatePassword: 'user/password'
         },
         good: {
             list: 'goods',
