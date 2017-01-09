@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Dimensions, AsyncStorage} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
@@ -38,7 +38,7 @@ export default class Settings extends Component {
                         <Text style={styles.new_message_text2}>清除</Text>
                     </View>
                     <View>
-                        <Button style={styles.logout_btn}>退出登录</Button>
+                        <Button style={styles.logout_btn} onPress={this._logout.bind(this)}>退出登录</Button>
                     </View>
                 </View>
             </View>
@@ -47,9 +47,16 @@ export default class Settings extends Component {
 
     _goBack() {
         const {navigator} = this.props;
+
         if (navigator) {
             navigator.pop();
         }
+    }
+
+    _logout() {
+        AsyncStorage.getItem('user').then((user) => {
+            AsyncStorage.removeItem('user');
+        });
     }
 }
 
