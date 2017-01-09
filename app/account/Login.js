@@ -1,11 +1,11 @@
 import {StyleSheet, AsyncStorage, Dimensions, View, Text, TextInput, AlertIOS} from 'react-native';
 import React, {Component} from 'react';
 import Button from 'react-native-button';
-
-import request from '../common/request';
-import config from '../common/config';
 import Register from './Register';
 import Forget from './Forget';
+import request from '../common/request';
+import config from '../common/config';
+import Service from '../common/service';
 
 export default class Login extends Component {
     constructor(props) {
@@ -51,34 +51,40 @@ export default class Login extends Component {
 
     _submit() {
         let me = this;
-        let nameOrMail = this.state.nameOrMail;
-        let password = this.state.password;
+        let {nameOrMail, password} = this.state;
 
         if (!nameOrMail) {
-            AlertIOS.alert('请输入用户名或邮箱!');
+            Service.showToast('请输入用户名或邮箱');
             return;
         }
-
         if (!password) {
-            AlertIOS.alert('请输入密码!');
+            Service.showToast('请输入密码');
             return;
         }
 
-        let body = {
-            nameOrMail: nameOrMail,
-            password: password
-        };
-        let verifyUrl = config.api.base + config.api.verify;
-
-        request.post(verifyUrl, body).then((data) => {
-            if (data && data.success) {
-                me.props.afterLogin(data.data);
+        request.get(config.api.host + config.api.user.getUser, {
+            mail: nameOrMail
+        }).then((user) => {
+            if (user && user.status) {
+                if (user.result.password === password) {
+                    Service.showToast('登录成功');
+                    me.props.afterLogin(user);
+                }
             } else {
-                AlertIOS.alert('获取验证码失败,请检查手机号!');
+                return request.get(config.api.host + config.api.user.getUser, {
+                    username: nameOrMail
+                });
             }
-        }).catch((error) => {
-            AlertIOS.alert('获取验证码失败,请检查网络!');
-        });
+        }).then((user) => {
+            if (user && user.status) {
+                if (user.result.password === password) {
+                    Service.showToast('登录成功');
+                    me.props.afterLogin(user);
+                }
+            } else {
+                Service.showToast('登录失败,用户不存在,请先注册');
+            }
+        })
     }
 
     _gotoView(name) {

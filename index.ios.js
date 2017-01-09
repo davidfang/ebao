@@ -35,7 +35,13 @@ export default class ebao extends Component {
         if (!this.state.logined) {
             return (
                 <Navigator
-                    initialRoute={{ name: 'login', component: Login, afterLogin: this._afterLogin.bind(this)}}
+                    initialRoute={{
+                        name: 'login',
+                        component: Login,
+                        params: {
+                            afterLogin: this._afterLogin.bind(this)
+                        }
+                    }}
                     configureScene={(route) => {
                             return Navigator.SceneConfigs.FloatFromRight;
                         }}
@@ -171,7 +177,7 @@ export default class ebao extends Component {
             if (data) {
                 user = JSON.parse(data);
             }
-            if (user && user.accessToken) {
+            if (user) {
                 newState.user = user;
                 newState.logined = true;
             } else {

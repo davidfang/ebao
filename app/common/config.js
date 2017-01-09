@@ -33,13 +33,13 @@ module.exports = {
         creations: '/api/creations',
         comment: '/api/comments',
         signup: '/api/u/signup',
-        verify: '/api/u/verify',
         signature: '/api/signatrue',
 
         host: 'http://localhost:9999/',
         user: {
             getUserByMail: 'user/mail',
             getUserByName: 'user/name/',
+            getUser: 'user',
             sendVerifyCode: 'user/code',
             register: 'user',
             updatePassword: 'user/password'
