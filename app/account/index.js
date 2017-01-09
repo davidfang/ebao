@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, AsyncStorage} from 'react-native';
 import React, {Component} from 'react';
 
 import MyDetail from './MyDetail';
@@ -9,6 +9,13 @@ import Account from './Account';
 import Settings from './Settings';
 
 export default class Mine extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            user: {}
+        }
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -20,8 +27,7 @@ export default class Mine extends Component {
                         styles.padding_left_and_right]}>
                         <View style={styles.my_avatar}></View>
                         <View style={styles.my_name}>
-                            <Text style={styles.my_real_name}>张三</Text>
-                            <Text style={styles.my_name_number}>编号:zhangsan001</Text>
+                            <Text style={styles.my_real_name}>{this.state.user.username}</Text>
                         </View>
                         <View style={styles.my_edit}>
                             <Text style={styles.my_edit_text} onPress={this._gotoView.bind(this, 'detail')}>编辑</Text>
@@ -57,6 +63,15 @@ export default class Mine extends Component {
         );
     }
 
+    componentDidMount() {
+        let me = this;
+        AsyncStorage.getItem('user').then((user) => {
+            me.setState({
+                user: JSON.parse(user)
+            });
+        })
+    }
+
     _gotoView(type) {
         const {navigator} = this.props;
 
@@ -88,7 +103,10 @@ export default class Mine extends Component {
 
             navigator.push({
                 name: type,
-                component: component
+                component: component,
+                params: {
+                    user: this.state.user
+                }
             });
         }
     }

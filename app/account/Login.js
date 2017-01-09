@@ -64,22 +64,22 @@ export default class Login extends Component {
 
         request.get(config.api.host + config.api.user.getUser, {
             mail: nameOrMail
-        }).then((user) => {
-            if (user && user.status) {
-                if (user.result.password === password) {
+        }).then((data) => {
+            if (data && data.status) {
+                if (data.result.password === password) {
                     Service.showToast('登录成功');
-                    me.props.afterLogin(user);
+                    me.props.afterLogin(data.result);
                 }
             } else {
                 return request.get(config.api.host + config.api.user.getUser, {
                     username: nameOrMail
                 });
             }
-        }).then((user) => {
-            if (user && user.status) {
-                if (user.result.password === password) {
+        }).then((data) => {
+            if (data && data.status) {
+                if (data.result.password === password) {
                     Service.showToast('登录成功');
-                    me.props.afterLogin(user);
+                    me.props.afterLogin(data.result);
                 }
             } else {
                 Service.showToast('登录失败,用户不存在,请先注册');

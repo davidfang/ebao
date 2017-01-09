@@ -13,6 +13,7 @@ export default class MyDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            user: this.props.user,
             avatarData: ''
         }
     }
@@ -42,12 +43,8 @@ export default class MyDetail extends Component {
                         <Text style={styles.avatar_edit} onPress={this._avatarPick.bind(this)}>编辑</Text>
                     </View>
                     <View style={[styles.body_item, styles.backgound_white, styles.border_top, styles.border_bottom, styles.padding_left_and_right, styles.margin_top]}>
-                        <Text style={styles.body_item_text1}>用户名</Text>
+                        <Text style={styles.body_item_text1}>{this.state.user.username}</Text>
                         <Text style={styles.body_item_text2}>清除</Text>
-                    </View>
-                    <View style={[styles.body_item, styles.backgound_white, styles.border_bottom, styles.padding_left_and_right]}>
-                        <Text style={styles.body_item_text1}>编码</Text>
-                        <Text style={styles.body_item_text2}>zhangsan 0001</Text>
                     </View>
                     <View style={[styles.body_item, styles.backgound_white, styles.border_bottom, styles.padding_left_and_right]}>
                         <Text style={styles.body_item_text1}>性别</Text>
