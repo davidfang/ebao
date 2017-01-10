@@ -109,7 +109,15 @@ export default class MyDetail extends Component {
             pickerFontSize: 20,
             pickerFontColor: [31, 31 ,31, 1],
             onPickerConfirm: (pickedValue, pickedIndex) => {
-                console.log('sex', pickedValue, pickedIndex);
+                let gender = (pickedValue == '男' ? 'male' : 'female');
+                request.post(config.api.host + config.api.user.updateGender, {
+                    userId: me.state.user._id,
+                    gender: gender
+                }).then((data) => {
+                    if (data && data.status) {
+                        Service.showToast('性别修改成功');
+                    }
+                })
             },
             onPickerCancel: (pickedValue, pickedIndex) => {
                 console.log('sex', pickedValue, pickedIndex);

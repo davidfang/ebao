@@ -44,6 +44,7 @@ module.exports = {
             register: 'user',
             updatePassword: 'user/password',
             updateAvatar: 'user/avatar',
+            updateGender: 'user/gender'
         },
         good: {
             list: 'goods',
