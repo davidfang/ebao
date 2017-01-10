@@ -1,20 +1,24 @@
-import {View, Text, Image, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, Image, Modal, TouchableOpacity, StyleSheet, Dimensions, AsyncStorage} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {ImagePickerManager} from 'NativeModules';
 import Picker from 'react-native-picker';
-
+import * as Progress from 'react-native-progress';
+import sha1 from 'sha1';
 import AddressList from './AddressList';
-
 import request from '../common/request';
 import config from '../common/config';
+import Service from '../common/service';
 
 export default class MyDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
             user: this.props.user,
-            avatarData: ''
+            avatarData: this.props.user && this.props.user.avatar,
+
+            modalVisible: false,
+            progress: 0
         }
     }
 
@@ -35,12 +39,18 @@ export default class MyDetail extends Component {
                             {
                                 this.state.avatarData ?
                                     <View>
-                                        <Image style={styles.avatar_image} source={{url: this.state.avatarData}}/>
+                                        <Image style={styles.avatar_image} source={{uri: this.state.avatarData}}/>
                                     </View> :
                                     <View style={styles.avatar_fake_image}/>
                             }
                         </View>
-                        <Text style={styles.avatar_edit} onPress={this._avatarPick.bind(this)}>编辑</Text>
+                        <Text style={styles.avatar_edit} onPress={this._avatarPick.bind(this)}>
+                            {
+                                this.state.avatarData ?
+                                    '更换' :
+                                    '上传'
+                            }
+                        </Text>
                     </View>
                     <View style={[styles.body_item, styles.backgound_white, styles.border_top, styles.border_bottom, styles.padding_left_and_right, styles.margin_top]}>
                         <Text style={styles.body_item_text1}>{this.state.user.username}</Text>
@@ -58,15 +68,18 @@ export default class MyDetail extends Component {
                         <Text style={styles.body_item_text1}>收货地址</Text>
                         <Text style={styles.body_item_text2} onPress={this._gotoView.bind(this)}>查看</Text>
                     </View>
+                    <Modal animationType={'fade'} visible={this.state.modalVisible} transparent={true}
+                           onRequestClose={() => {this._setModalVisible(false)}}>
+                        <View style={styles.modal_container}>
+                            <Progress.Pie style={styles.modal_progress} borderColor="#ee735c" color="#ee735c" size={90}
+                                          progress={this.state.progress}
+                            />
+                            <Text style={styles.modal_text}>拼命上传中,请耐心等待!</Text>
+                        </View>
+                    </Modal>
                 </View>
             </View>
         );
-    }
-
-    _setSex(choice) {
-        this.setState({
-            sex: choice
-        });
     }
 
     _goBack() {
@@ -75,6 +88,12 @@ export default class MyDetail extends Component {
         if (navigator) {
             navigator.pop();
         }
+    }
+
+    _setSex(choice) {
+        this.setState({
+            sex: choice
+        });
     }
 
     _sexPick() {
@@ -123,24 +142,95 @@ export default class MyDetail extends Component {
                 return;
             }
 
+            me._setModalVisible(true);
+
             let avatarData = 'data:image/jpeg;base64,' + response.data;
             me.setState({
                 avatarData: avatarData
             });
 
             let timestamp = Date.now();
-            let signatureUrl = config.api.base + config.api.signature;
-            let accessToken = 'fake';
+            let tags = 'app,avatar';
+            let folder = 'avatar';
 
-            request.post(signatureUrl, {
-                accessToken: accessToken,
-                timestamp: timestamp
-            }).then((data) => {
-                if (data && data.success) {
-                    
+            AsyncStorage.getItem('user').then((userJson) => {
+                let user = JSON.parse(userJson);
+                if (user) {
+                    let signature = 'folder=' + folder + '&tags=' + tags +
+                        '&timestamp=' + timestamp + config.CLOUDINARY.api_secret;
+                    signature = sha1(signature);
+
+                    let body = new FormData();
+                    body.append('folder', folder);
+                    body.append('tags', tags);
+                    body.append('timestamp', timestamp);
+                    body.append('signature', signature);
+                    body.append('api_key', config.CLOUDINARY.api_key);
+                    body.append('resource_type', 'image');
+                    body.append('file', avatarData);
+
+                    me._upload(body);
                 }
-            });
+            })
         });
+    }
+
+    _upload(body) {
+        let me = this;
+        let xhr = new XMLHttpRequest();
+        let url = config.CLOUDINARY.image;
+
+        xhr.open('POST', url);
+        xhr.onload = () => {
+            if (xhr.status !== 200) {
+                AlertIOS.alert('请求失败');
+                console.log(xhr.responseText);
+                return;
+            }
+            if (!xhr.responseText) {
+                AlertIOS.alert('请求失败');
+                return;
+            }
+
+            let response;
+            try {
+                response = JSON.parse(xhr.responseText);
+            } catch (e) {
+                console.log(e, 'parse fails');
+            }
+
+            if (response && response.public_id) {
+                me.setState({
+                    url: response.url
+                });
+
+                request.post(config.api.host + config.api.user.updateAvatar, {
+                    userId: me.state.user._id,
+                    avatar: response.url
+                }).then((data) => {
+                    if (data && data.status) {
+                        Service.showToast('头像更换成功');
+                    }
+                })
+            }
+        }
+
+        if (xhr.upload) {
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    let percent = Number((event.loaded / event.total).toFixed(2));
+                    me.setState({
+                        progress: percent
+                    });
+
+                    if (percent === 1) {
+                        me._setModalVisible(false);
+                    }
+                }
+            }
+        }
+
+        xhr.send(body);
     }
 
     _gotoView() {
@@ -158,6 +248,12 @@ export default class MyDetail extends Component {
         return (
             ['男', '女']
         );
+    }
+
+    _setModalVisible(isVisible) {
+        this.setState({
+            modalVisible: isVisible
+        });
     }
 }
 
@@ -268,5 +364,16 @@ const styles = StyleSheet.create({
     body_item_text2: {
         fontSize: 16,
         color: '#666'
+    },
+    modal_container: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        paddingTop: 150,
+        alignItems: 'center'
+    },
+    modal_text: {
+        marginTop: 20,
+        fontSize: 18,
+        color: '#fff'
     }
 });

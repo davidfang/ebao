@@ -42,7 +42,8 @@ module.exports = {
             getUser: 'user',
             sendVerifyCode: 'user/code',
             register: 'user',
-            updatePassword: 'user/password'
+            updatePassword: 'user/password',
+            updateAvatar: 'user/avatar',
         },
         good: {
             list: 'goods',

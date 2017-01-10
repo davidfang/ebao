@@ -112,9 +112,9 @@ export default class Publish extends Component {
 
             me._setModalVisible(true);
 
-            let avatarData = 'data:image/jpeg;base64,' + response.data;
+            let descImage = 'data:image/jpeg;base64,' + response.data;
             me.setState({
-                descImage: avatarData
+                descImage: descImage
             });
 
             let timestamp = Date.now();
@@ -141,7 +141,7 @@ export default class Publish extends Component {
                     body.append('signature', signature);
                     body.append('api_key', config.CLOUDINARY.api_key);
                     body.append('resource_type', 'image');
-                    body.append('file', avatarData);
+                    body.append('file', descImage);
 
                     me._upload(body);
                 }
