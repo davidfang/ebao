@@ -103,10 +103,7 @@ export default class Mine extends Component {
 
             navigator.push({
                 name: type,
-                component: component,
-                params: {
-                    user: this.state.user
-                }
+                component: component
             });
         }
     }

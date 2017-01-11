@@ -14,8 +14,8 @@ export default class MyDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: this.props.user,
-            avatarData: this.props.user && this.props.user.avatar,
+            user: '',
+            avatarData: '',
 
             modalVisible: false,
             progress: 0
@@ -82,6 +82,17 @@ export default class MyDetail extends Component {
         );
     }
 
+    componentDidMount() {
+        let me = this;
+        AsyncStorage.getItem('user').then((userJson) => {
+            let user = JSON.parse(userJson);
+            me.setState({
+                user: user,
+                avatarData: user.avatar
+            });
+        })
+    }
+
     _goBack() {
         const {navigator} = this.props;
 
@@ -116,14 +127,15 @@ export default class MyDetail extends Component {
                 }).then((data) => {
                     if (data && data.status) {
                         Service.showToast('性别修改成功');
+                        AsyncStorage.setItem('user', JSON.stringify(data.result));
                     }
                 })
             },
             onPickerCancel: (pickedValue, pickedIndex) => {
-                console.log('sex', pickedValue, pickedIndex);
+                //console.log('sex', pickedValue, pickedIndex);
             },
             onPickerSelect: (pickedValue, pickedIndex) => {
-                console.log('sex', pickedValue, pickedIndex);
+                //console.log('sex', pickedValue, pickedIndex);
             }
         });
         Picker.show();
@@ -191,12 +203,11 @@ export default class MyDetail extends Component {
         xhr.open('POST', url);
         xhr.onload = () => {
             if (xhr.status !== 200) {
-                AlertIOS.alert('请求失败');
-                console.log(xhr.responseText);
+                Service.showToast('请求失败');
                 return;
             }
             if (!xhr.responseText) {
-                AlertIOS.alert('请求失败');
+                Service.showToast('请求失败');
                 return;
             }
 
@@ -218,6 +229,7 @@ export default class MyDetail extends Component {
                 }).then((data) => {
                     if (data && data.status) {
                         Service.showToast('头像更换成功');
+                        AsyncStorage.setItem('user', JSON.stringify(data.result));
                     }
                 })
             }
