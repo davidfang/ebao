@@ -3,6 +3,9 @@ import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Picker from 'react-native-picker';
 import area from '../../data/area.json';
+import config from '../common/config';
+import request from '../common/request';
+import Service from '../common/service';
 
 export default class AddressAction extends Component {
     constructor(props) {
@@ -10,7 +13,9 @@ export default class AddressAction extends Component {
         this.state = {
             name: this.props.data.name,
             telephone: this.props.data.telephone,
-            trueSwitchIsOn: this.props.data.isDefault
+            area: this.props.data.area,
+            detail: this.props.data.detail,
+            isDefault: this.props.data.isDefault
         };
     }
 
@@ -47,13 +52,14 @@ export default class AddressAction extends Component {
                     </View>
                     <View style={[styles.item_address, styles.backgound_white,
                                 styles.border_bottom, styles.padding_left_and_right]}>
-                        <TextInput style={styles.item_address_input} multiline={true} placeholder="详细地址"/>
+                        <TextInput style={styles.item_address_input} multiline={true} placeholder="详细地址"
+                                   value={this.state.detail} onChangeText={(text) => {this.setState({detail: text})}}/>
                     </View>
                     <View style={[styles.item, styles.backgound_white, styles.border_top, styles.border_bottom,
                         styles.margin_top, styles.padding_left_and_right]}>
                         <Text style={styles.item_text1}>设为默认</Text>
-                        <Switch onValueChange={(value) => this.setState({trueSwitchIsOn: value})}
-                                value={this.state.trueSwitchIsOn} />
+                        <Switch onValueChange={(value) => this.setState({isDefault: value})}
+                                value={this.state.isDefault} />
                     </View>
                 </View>
             </View>
@@ -69,6 +75,21 @@ export default class AddressAction extends Component {
     }
 
     _submit() {
+        const {name, telephone, area, detail, isDefault} = this.state;
+
+        if (!name) {
+            Service.showToast('请填写收货人姓名');
+            return;
+        }
+        if (!telephone) {
+            Service.showToast('请填写收货人手机号');
+            return;
+        }
+        if (!area || area.lenght || !detail) {
+            Service.showToast('请填写收货人地址');
+            return;
+        }
+
 
     }
 
@@ -95,15 +116,17 @@ export default class AddressAction extends Component {
             pickerCancelBtnColor: [0, 0, 0, 1],
             pickerToolBarFontSize: 18,
             pickerFontSize: 20,
-            selectedValue: ['上海', '上海', '杨浦区'],
+            selectedValue: me.state.area,
             onPickerConfirm: pickedValue => {
-                console.log('area', pickedValue);
+                me.setState({
+                    area: pickedValue
+                });
             },
             onPickerCancel: pickedValue => {
-                console.log('area', pickedValue);
+                //console.log('area', pickedValue);
             },
             onPickerSelect: pickedValue => {
-                console.log('area', pickedValue);
+                //console.log('area', pickedValue);
             }
         });
         Picker.show();

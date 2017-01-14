@@ -11,32 +11,7 @@ export default class AddressList extends Component {
         super(props);
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            dataSource: ds.cloneWithRows([
-                {
-                    name: '张三',
-                    address: '上海市杨浦区创智天地广场3号楼3楼',
-                    telephone: '18899005566',
-                    isDefault: true
-                },
-                {
-                    name: '李四',
-                    address: '上海市杨浦区创智天地广场3号楼3楼',
-                    telephone: '18899005566',
-                    isDefault: false
-                },
-                {
-                    name: '王二麻子',
-                    address: '上海市杨浦区创智天地广场3号楼3楼',
-                    telephone: '18899005566',
-                    isDefault: false
-                },
-                {
-                    name: '奥特曼',
-                    address: '上海市杨浦区创智天地广场3号楼3楼',
-                    telephone: '18899005566',
-                    isDefault: false
-                }
-            ])
+            dataSource: ds.cloneWithRows(this.props.addresses)
         };
     }
 

@@ -257,10 +257,19 @@ export default class MyDetail extends Component {
         const {navigator} = this.props;
 
         if (navigator) {
-            navigator.push({
-                name: 'addressList',
-                component: AddressList
-            });
+            AsyncStorage.getItem('user').then((userJson) => {
+                return request.get(config.api.host + config.api.user.getUser, {
+                    _id: JSON.parse(userJson)._id
+                });
+            }).then((data) => {
+                navigator.push({
+                    name: 'addressList',
+                    component: AddressList,
+                    params: {
+                        addresses: data.result.addresses
+                    }
+                });
+            })
         }
     }
 
