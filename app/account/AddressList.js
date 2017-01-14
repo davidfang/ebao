@@ -1,16 +1,20 @@
-import {View, Text, TouchableOpacity, TouchableHighlight, ListView, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, TouchableOpacity, TouchableHighlight, ListView, StyleSheet, Dimensions,
+    AsyncStorage} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
-
+import PubSub from 'pubsub-js';
 import PickerWidget from '../components/PickerWidget';
 import AddressAction from './AddressAction';
+import config from '../common/config';
+import request from '../common/request';
 
 export default class AddressList extends Component {
     constructor(props) {
         super(props);
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
+            addresses: this.props.addresses,
             dataSource: ds.cloneWithRows(this.props.addresses)
         };
     }
@@ -37,6 +41,22 @@ export default class AddressList extends Component {
                 <PickerWidget ref="delete_picker"/>
             </View>
         );
+    }
+
+    componentDidMount() {
+        let me = this;
+        PubSub.subscribe('update_addresses', function (msg) {
+            AsyncStorage.getItem('user').then((userJson) => {
+                return request.get(config.api.host + config.api.user.getUser, {
+                    _id: JSON.parse(userJson)._id
+                });
+            }).then((data) => {
+                me.setState({
+                    dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+                        .cloneWithRows(data.result.addresses)
+                });
+            })
+        });
     }
 
     _renderItem(rowData, rowID) {
@@ -102,7 +122,7 @@ export default class AddressList extends Component {
 }
 
 const width = Dimensions.get('window').width;
-const styles =StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1
     },

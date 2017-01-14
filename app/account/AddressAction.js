@@ -2,6 +2,7 @@ import {View, Text, TextInput, Switch, TouchableOpacity, TouchableHighlight, Lis
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Picker from 'react-native-picker';
+import PubSub from 'pubsub-js';
 import area from '../../data/area.json';
 import config from '../common/config';
 import request from '../common/request';
@@ -111,6 +112,7 @@ export default class AddressAction extends Component {
             if (data && data.status) {
                 Service.showToast('地址修改完成');
                 me._goBack();
+                PubSub.publish('update_addresses');
             }
         })
     }

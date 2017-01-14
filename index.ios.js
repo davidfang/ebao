@@ -2,7 +2,6 @@ import {AppRegistry, StyleSheet, AsyncStorage, View, Text,
     TabBarIOS, Navigator, ActivityIndicator, Dimensions} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-
 import Slider from './app/account/Slider';
 import Login from './app/account/Login';
 import Home from './app/creation/index';
@@ -19,7 +18,7 @@ export default class ebao extends Component {
             user: null,
             logined: false,
             booted: false,
-            notifCount: 99
+            notifCount: 0
         }
     }
 
