@@ -4,7 +4,7 @@ import {TabViewAnimated, TabBarTop} from "react-native-tab-view";
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Progress from 'react-native-progress';
 import Mock from 'mockjs';
-
+import PubSub from 'pubsub-js';
 import Detail from './Detail';
 import request from '../common/request';
 import config from '../common/config';
@@ -95,7 +95,12 @@ export default class Home extends Component {
     }
 
     componentDidMount() {
+        let me = this;
+
         this._fetchData();
+        PubSub.subscribe('good_list_update', function (msg) {
+            me._fetchData();
+        });
     }
 
     _handleChangeTab = (index) => {

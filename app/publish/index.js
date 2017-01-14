@@ -12,6 +12,7 @@ import {ImagePickerManager} from 'NativeModules';
 import CameraRollPicker from 'react-native-camera-roll-picker';
 import Picker from 'react-native-picker';
 import sha1 from 'sha1';
+import PubSub from 'pubsub-js';
 import Detail from '../creation/Detail';
 import config from '../common/config';
 import request from '../common/request';
@@ -226,6 +227,7 @@ export default class Publish extends Component {
             price: price
         }).then((data) => {
             if (data && data.status) {
+                PubSub.publish('good_list_update');
                 AlertIOS.alert(
                     '您的宝贝已上架',
                     '您可继续发布或查看本宝贝详情',
