@@ -49,6 +49,9 @@ module.exports = {
         good: {
             list: 'goods',
             publish: 'good'
+        },
+        address: {
+            update: 'address'
         }
     },
 

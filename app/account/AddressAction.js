@@ -36,13 +36,15 @@ export default class AddressAction extends Component {
                     <View style={[styles.item, styles.border_top, styles.backgound_white,
                                 styles.border_bottom, styles.padding_left_and_right]}>
                         <Text style={styles.item_text1}>收货人</Text>
-                        <TextInput style={styles.item_input} placeholder="姓名" value={this.state.name}/>
+                        <TextInput style={styles.item_input} placeholder="姓名" value={this.state.name}
+                                   onChangeText={(text) => {this.setState({name: text})}}/>
                         <Text style={styles.item_text2} onPress={this._emptyName.bind(this)}>清空</Text>
                     </View>
                     <View style={[styles.item, styles.backgound_white,
                                 styles.border_bottom, styles.padding_left_and_right]}>
                         <Text style={styles.item_text1}>手机号</Text>
-                        <TextInput style={styles.item_input} placeholder="手机号" value={this.state.telephone}/>
+                        <TextInput style={styles.item_input} placeholder="手机号" value={this.state.telephone}
+                                   onChangeText={(text) => {this.setState({telephone: text})}}/>
                         <Text style={styles.item_text2} onPress={this._emptyTelephone.bind(this)}>清空</Text>
                     </View>
                     <View style={[styles.item, styles.backgound_white,
@@ -75,7 +77,14 @@ export default class AddressAction extends Component {
     }
 
     _submit() {
+        let me = this;
         const {name, telephone, area, detail, isDefault} = this.state;
+        let address = '';
+        if (['北京', '上海', '天津', '重庆'].indexOf(area[0]) !== -1) {
+            address = area[0] + '市' + area[2] + detail;
+        } else {
+            address = area.join('') + detail;
+        }
 
         if (!name) {
             Service.showToast('请填写收货人姓名');
@@ -90,7 +99,20 @@ export default class AddressAction extends Component {
             return;
         }
 
-
+        request.post(config.api.host + config.api.address.update, {
+            addressId: this.props.data._id,
+            name: name,
+            telephone: telephone,
+            area: area,
+            detail: detail,
+            isDefault: isDefault,
+            address: address
+        }).then((data) => {
+            if (data && data.status) {
+                Service.showToast('地址修改完成');
+                me._goBack();
+            }
+        })
     }
 
     _emptyName() {
