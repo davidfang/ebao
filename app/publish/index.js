@@ -12,10 +12,10 @@ import {ImagePickerManager} from 'NativeModules';
 import CameraRollPicker from 'react-native-camera-roll-picker';
 import Picker from 'react-native-picker';
 import sha1 from 'sha1';
-
+import Detail from '../creation/Detail';
 import config from '../common/config';
 import request from '../common/request';
-import Detail from '../creation/Detail';
+import Service from '../common/service';
 
 export default class Publish extends Component {
     constructor(props) {
@@ -23,10 +23,10 @@ export default class Publish extends Component {
         this.state = {
             title: '',
             desc: '',
-            descImage: '',
+            url: '',
             price: 0,
 
-            url: '',
+            descImage: '',
 
             modalVisible: false,
             progress: 0
@@ -64,7 +64,7 @@ export default class Publish extends Component {
                         {
                             this.state.descImage ?
                                 <View>
-                                    <Image style={styles.photos_box} source={{url: this.state.descImage}}/>
+                                    <Image style={styles.photos_box} source={{uri: this.state.descImage}}/>
                                 </View> :
                                 <TouchableOpacity style={styles.photos_box} underlayColor="#fff" onPress={this._selectPhotos.bind(this)}>
                                     <Text style={styles.photos_text}>添加图片</Text>
@@ -203,19 +203,19 @@ export default class Publish extends Component {
         let {title, desc, descImage, url, price} = this.state;
 
         if (!title) {
-            AlertIOS.alert('请填写标题内容');
+            Service.showToast('请填写标题内容');
             return;
         }
         if (!desc) {
-            AlertIOS.alert('请描述您的宝贝');
+            Service.showToast('请描述您的宝贝');
             return;
         }
         if (!descImage) {
-            AlertIOS.alert('请选择您的宝贝的相关图片');
+            Service.showToast('请选择您的宝贝的相关图片');
             return;
         }
         if (!price) {
-            AlertIOS.alert('请选择售价');
+            Service.showToast('请选择售价');
             return;
         }
 
