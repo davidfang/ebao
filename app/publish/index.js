@@ -1,5 +1,5 @@
 import {View, Text, TextInput, Image, TouchableOpacity, Modal, AlertIOS,
-    StyleSheet, Dimensions, NativeModules} from 'react-native';
+    StyleSheet, Dimensions, NativeModules, AsyncStorage} from 'react-native';
 import React, {Component} from 'react';
 import Button from 'react-native-button';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -220,11 +220,14 @@ export default class Publish extends Component {
             return;
         }
 
-        request.put(config.api.host + config.api.good.publish, {
-            title: title,
-            desc: desc,
-            url: url,
-            price: price
+        AsyncStorage.getItem('user').then((userJson) => {
+            return request.put(config.api.host + config.api.good.publish, {
+                title: title,
+                desc: desc,
+                url: url,
+                price: price,
+                publisher: JSON.parse(userJson)._id
+            });
         }).then((data) => {
             if (data && data.status) {
                 PubSub.publish('good_list_update');
