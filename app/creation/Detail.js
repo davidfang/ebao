@@ -12,19 +12,13 @@ import User from '../account/User';
 export default class Detail extends Component {
     constructor(props) {
         super(props);
-        let data = this.props.data;
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
         this.state = {
-            data: data,
-            rate: 1,
-            muted: false,
-            resizeMode: 'contain',
-            repeat: false,
+            data: this.props.data,
 
             dataSource: ds.cloneWithRows([]),
 
-            animationType: '',
             isLike: false,
             modalVisible: false,
             isSending: false,
@@ -48,11 +42,11 @@ export default class Detail extends Component {
                 </View>
                 <View style={styles.comments_author_box}>
                     <TouchableOpacity onPress={this._gotoView.bind(this)}>
-                        <Image style={styles.comments_avatar} source={{uri: data.author.avatar}}/>
+                        <Image style={styles.comments_avatar} source={{uri: 'http://dummyimage.com/640X640/86f279)'}}/>
                     </TouchableOpacity>
                     <View style={styles.comment_desc_box}>
                         <Text style={styles.comments_nickname} onPress={this._gotoView.bind(this)}>
-                            {data.author.nickname}
+                            {data.info.publisher.username}
                         </Text>
                         <Text style={styles.comments_title}>3天前</Text>
                     </View>
@@ -100,13 +94,13 @@ export default class Detail extends Component {
             <View style={styles.comments_info_box}>
                 <View style={styles.item_desc_container}>
                     <Text style={styles.item_title} numberOfLines={2}>
-                        苹果MacBook Pro 13.3英寸笔记本电脑 深空灰色(Core i5处理器/256G SSD闪存)
+                        {data.info.good.desc}
                     </Text>
                     <View style={[styles.item_state, styles.item_desc_margin]}>
                         <Text style={styles.item_text_font}>
-                            总需:1000人次
+                            总需:{data.info.good.price}人次
                         </Text>
-                        <Text style={styles.item_text_font}>剩余人次:900</Text>
+                        <Text style={styles.item_text_font}>剩余人次:{data.info.good.price}</Text>
                     </View>
                     <Progress.Bar style={styles.item_desc_margin} progress={0.1} height={3} width={355} color={'#ee735c'}/>
                 </View>

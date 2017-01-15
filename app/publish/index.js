@@ -251,15 +251,8 @@ export default class Publish extends Component {
                                         component: Detail,
                                         params: {
                                             data: {
-                                                "title":"信象然争江点强上传导细每内好强克下。委年但类土器门题化家员音些。共金四际强立般都一位以体在标料次。",
-                                                "_id":"220000200801184370",
-                                                "video":"http://video.iblack7.com/video_hcwijdwneqantgb4yqgx.mp4",
-                                                "author": {
-                                                    "avatar":"http://dummyimage.com/640X640/86f279)",
-                                                    "nickname":"Jason White"
-                                                },
-                                                "thumb":"http://dummyimage.com/1280x720/f279a9)",
-                                                'resetCallback': me._resetStateOfForm.bind(me)
+                                                info: data.result,
+                                                resetCallback: me._resetStateOfForm.bind(me)
                                             }
                                         }
                                     });
