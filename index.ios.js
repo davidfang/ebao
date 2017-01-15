@@ -2,6 +2,7 @@ import {AppRegistry, StyleSheet, AsyncStorage, View, Text,
     TabBarIOS, Navigator, ActivityIndicator, Dimensions} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
+import PubSub from 'pubsub-js';
 import Slider from './app/account/Slider';
 import Login from './app/account/Login';
 import Home from './app/creation/index';
@@ -150,7 +151,14 @@ export default class ebao extends Component {
     }
 
     componentDidMount() {
+        let me = this;
+
         this._asyncAppStatus();
+        PubSub.subscribe('user_logout', function (msg) {
+            me.setState({
+                logined: false
+            });
+        });
     }
 
     _afterLogin(user) {

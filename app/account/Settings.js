@@ -2,6 +2,8 @@ import {View, Text, TouchableOpacity, StyleSheet, Dimensions, AsyncStorage} from
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
+import PubSub from 'pubsub-js';
+import Service from '../common/service';
 
 export default class Settings extends Component {
     render() {
@@ -56,6 +58,8 @@ export default class Settings extends Component {
     _logout() {
         AsyncStorage.getItem('user').then((user) => {
             AsyncStorage.removeItem('user');
+            PubSub.publish('user_logout');
+            Service.showToast('退出成功,请重新登录');
         });
     }
 }
