@@ -29,7 +29,7 @@ export default class Detail extends Component {
     }
 
     render() {
-        let data = this.props.data;
+        let data = this.state.data;
 
         return (
             <View style={styles.container}>
@@ -93,7 +93,7 @@ export default class Detail extends Component {
         return (
             <View style={styles.comments_info_box}>
                 <View style={styles.item_desc_container}>
-                    <Text style={styles.item_title} numberOfLines={2}>
+                    <Text style={styles.item_title}>
                         {data.info.good.desc}
                     </Text>
                     <View style={[styles.item_state, styles.item_desc_margin]}>

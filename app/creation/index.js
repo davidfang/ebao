@@ -149,12 +149,19 @@ export default class Home extends Component {
 
     _gotoDetail(rowData) {
         const {navigator} = this.props;
+
         if (navigator) {
+            let data = {};
+            data.good = rowData;
+            data.publisher = rowData.publisher;
+
             navigator.push({
                 name: 'detail',
                 component: Detail,
                 params: {
-                    data: rowData
+                    data: {
+                        info: data
+                    }
                 }
             });
         }
