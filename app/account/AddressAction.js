@@ -80,6 +80,22 @@ export default class AddressAction extends Component {
     _submit() {
         let me = this;
         const {name, telephone, area, detail, isDefault} = this.state;
+        if (!name) {
+            Service.showToast('请输入收货人姓名');
+            return;
+        }
+        if (!telephone) {
+            Service.showToast('请输入收货人手机号');
+            return;
+        }
+        if (!area || !area.length) {
+            Service.showToast('请输入收货人所在地区');
+            return;
+        }
+        if (!detail) {
+            Service.showToast('请输入收货人详细地址');
+            return;
+        }
         let address = '';
         if (['北京', '上海', '天津', '重庆'].indexOf(area[0]) !== -1) {
             address = area[0] + '市' + area[2] + detail;
@@ -87,34 +103,25 @@ export default class AddressAction extends Component {
             address = area.join('') + detail;
         }
 
-        if (!name) {
-            Service.showToast('请填写收货人姓名');
-            return;
+        if (this.props.data._id) {
+            request.post(config.api.host + config.api.address.update, {
+                addressId: me.props.data._id,
+                name: name,
+                telephone: telephone,
+                area: area,
+                detail: detail,
+                isDefault: isDefault,
+                address: address
+            }).then((data) => {
+                if (data && data.status) {
+                    Service.showToast('地址编辑成功');
+                    me._goBack();
+                    PubSub.publish('update_addresses');
+                }
+            });
+        } else {
+            Service.showToast('地址添加成功');
         }
-        if (!telephone) {
-            Service.showToast('请填写收货人手机号');
-            return;
-        }
-        if (!area || area.lenght || !detail) {
-            Service.showToast('请填写收货人地址');
-            return;
-        }
-
-        request.post(config.api.host + config.api.address.update, {
-            addressId: this.props.data._id,
-            name: name,
-            telephone: telephone,
-            area: area,
-            detail: detail,
-            isDefault: isDefault,
-            address: address
-        }).then((data) => {
-            if (data && data.status) {
-                Service.showToast('地址修改完成');
-                me._goBack();
-                PubSub.publish('update_addresses');
-            }
-        })
     }
 
     _emptyName() {
