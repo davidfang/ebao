@@ -51,6 +51,7 @@ module.exports = {
             publish: 'good'
         },
         address: {
+            add: 'address',
             update: 'address'
         }
     },

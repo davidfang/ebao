@@ -1,4 +1,5 @@
-import {View, Text, TextInput, Switch, TouchableOpacity, TouchableHighlight, ListView, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, TextInput, Switch, TouchableOpacity, TouchableHighlight, ListView, StyleSheet,
+    Dimensions, AsyncStorage} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Picker from 'react-native-picker';
@@ -117,10 +118,30 @@ export default class AddressAction extends Component {
                     Service.showToast('地址编辑成功');
                     me._goBack();
                     PubSub.publish('update_addresses');
+                } else {
+                    Service.showToast('地址编辑失败,请稍后重试');
                 }
             });
         } else {
-            Service.showToast('地址添加成功');
+            AsyncStorage.getItem('user').then((userJson) => {
+                return request.put(config.api.host + config.api.address.add, {
+                    userId: JSON.parse(userJson)._id,
+                    name: name,
+                    telephone: telephone,
+                    area: area,
+                    detail: detail,
+                    isDefault: isDefault,
+                    address: address
+                });
+            }).then((data) => {
+                if (data && data.status) {
+                    Service.showToast('地址添加成功');
+                    me._goBack();
+                    PubSub.publish('update_addresses');
+                } else {
+                    Service.showToast('地址添加失败,请稍后重试');
+                }
+            })
         }
     }
 
