@@ -1,13 +1,13 @@
 import {StyleSheet, View, Text, Dimensions, TouchableOpacity,
-    ListView, Image, TextInput, Modal, AlertIOS} from 'react-native';
+    ListView, Image, TextInput, Modal, AlertIOS, AsyncStorage} from 'react-native';
 import React, {Component} from 'react';
 import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
-
+import User from '../account/User';
 import config from '../common/config';
 import request from '../common/request';
-import User from '../account/User';
+import Service from '../common/service';
 
 export default class Detail extends Component {
     constructor(props) {
@@ -19,7 +19,7 @@ export default class Detail extends Component {
 
             dataSource: ds.cloneWithRows([]),
 
-            isLike: false,
+            isUp: false,
             modalVisible: false,
             isSending: false,
             content: '',
@@ -106,10 +106,10 @@ export default class Detail extends Component {
                 </View>
                 <View style={styles.item_comments}>
                     <View style={[styles.item_box, styles.item_border_center]}>
-                        <Icon style={[styles.item_icon, this.state.isLike ? styles.item_like_color : null]}
-                              size={28} name={this.state.isLike ? "ios-heart" : "ios-heart-outline"}
-                              onPress={this._like.bind(this, true)}/>
-                        <Text style={styles.item_text} onPress={this._like.bind(this, true)}>收藏</Text>
+                        <Icon style={[styles.item_icon, this.state.isUp ? styles.item_like_color : null]}
+                              size={28} name={this.state.isUp ? "ios-heart" : "ios-heart-outline"}
+                              onPress={this._up.bind(this, true)}/>
+                        <Text style={styles.item_text} onPress={this._up.bind(this, true)}>收藏</Text>
                     </View>
                     <View style={styles.item_box}>
                         <Icon style={styles.item_icon} name="ios-chatboxes-outline" size={28}
@@ -159,7 +159,7 @@ export default class Detail extends Component {
 
     _fetchData() {
         let me = this;
-        let url = config.api.base + config.api.comment;
+        let url = config.api.base + config.api.comments;
 
         request.get(url, {
             id: 124,
@@ -179,9 +179,34 @@ export default class Detail extends Component {
         });
     }
 
-    _like() {
+    _up() {
+        let me = this;
+        let user = null;
         this.setState({
-            isLike: !this.state.isLike
+            isUp: !this.state.isUp
+        }, function () {
+            AsyncStorage.getItem('user').then((userJson) => {
+                user = JSON.parse(userJson);
+                return request.get(config.api.host + config.api.comment.getByUserIdAndGoodId, {
+                    userId: user._id,
+                    goodId: me.state.data.info.good._id
+                });
+            }).then((data) => {
+                if (data && data.status) {
+
+                } else if (data && !data.status && !data.result) {
+                    return request.put(config.api.host + config.api.comment.add, {
+                        isUp: me.state.isUp,
+                        content: me.state.content,
+                        userId: user._id,
+                        goodId: me.state.data.info.good._id
+                    });
+                }
+            }).then((data) => {
+                if (data && data.status) {
+                    Service.showToast('收藏成功');
+                }
+            })
         });
     }
 
@@ -192,13 +217,7 @@ export default class Detail extends Component {
     _closeModal() {
         this._setModalVisible(false);
     }
-
-    _setIsLike(isLike) {
-        this.setState({
-            isLike: isLike
-        });
-    }
-
+    
     _setModalVisible(isVisible) {
         this.setState({
             modalVisible: isVisible

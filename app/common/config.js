@@ -31,7 +31,7 @@ module.exports = {
     api: {
         base: 'http://rap.taobao.org/mockjs/11017',
         creations: '/api/creations',
-        comment: '/api/comments',
+        comments: '/api/comments',
         signup: '/api/u/signup',
         signature: '/api/signatrue',
 
@@ -53,6 +53,11 @@ module.exports = {
         address: {
             add: 'address',
             update: 'address'
+        },
+        comment: {
+            getByUserIdAndGoodId: 'comment',
+            add: 'comment',
+            update: 'comment'
         }
     },
 
