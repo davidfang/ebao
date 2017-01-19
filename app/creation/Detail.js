@@ -87,9 +87,15 @@ export default class Detail extends Component {
                                            defaultValue={this.state.content}/>
                             </View>
                         </View>
-                        <Button style={styles.submit_button} onPress={this._submit.bind(this)}>
-                            提交留言
-                        </Button>
+                        {
+                            (this.state.content && !this.state.isSending) ?
+                                <Button style={styles.submit_button} onPress={this._submit.bind(this)}>
+                                    提交留言
+                                </Button> :
+                                <Button style={styles.submit_button_disable}>
+                                    提交留言
+                                </Button>
+                        }
                     </View>
                 </Modal>
             </View>
@@ -216,7 +222,7 @@ export default class Detail extends Component {
                                 Service.showToast('取消成功');
                             }
                         }
-                    })
+                    });
                 } else if (data && !data.status && !data.result) {
                     request.put(config.api.host + config.api.comment.add, {
                         isUp: me.state.isUp,
@@ -250,44 +256,64 @@ export default class Detail extends Component {
     _submit() {
         let me = this;
 
-        if (!this.state.content) {
-            return AlertIOS.alert('留言不能为空!');
-        }
-
-        if (this.state.isSending) {
-            return AlertIOS.alert('正在评论中!');
-        }
-
         this.setState({
             isSending: true
         }, function () {
-            var body = {
-                accessToken: 'abc',
-                creation: '1323',
-                content: me.state.content
-            }
-
-            let url = config.api.base + config.api.comment;
-            request.post(url, body).then(function (data) {
-                if (data && data.success) {
-                    //TODO:更新列表
-
-                    me.setState({
-                        isSending: false,
-                        content: ''
-                        //TODO:还有其他值需要设置
-                    });
-
-                    me._setModalVisible(false);
-                }
-            }).catch((error) => {
-                console.log(error);
-                me.setState({
-                    isSending: false
-                    //TODO:还有其他值需要设置
+            AsyncStorage.getItem('user').then((userJson) => {
+                user = JSON.parse(userJson);
+                return request.get(config.api.host + config.api.comment.getByUserIdAndGoodId, {
+                    userId: user._id,
+                    goodId: me.state.data.info.good._id
                 });
-                me._setModalVisible(false);
-                AlertIOS.alert('留言失败,请稍后重试!');
+            }).then((data) => {
+                if (data && data.status) {
+                    console.log('jiangwu', me.state);
+                    request.post(config.api.host + config.api.comment.update, {
+                        isUp: me.state.isUp,
+                        content: me.state.content,
+                        userId: user._id,
+                        goodId: me.state.data.info.good._id
+                    }).then((data) => {
+                        if (data && data.status) {
+                            me.setState({
+                                isSending: false,
+                                content: '',
+                                modalVisible: false
+                            }, function () {
+                                Service.showToast('评论成功');
+                            });
+                        }
+                    }).catch((error) => {
+                        me.setState({
+                            isSending: false,
+                            modalVisible: false
+                        });
+                        AlertIOS.alert('留言失败,请稍后重试!');
+                    });
+                } else if (data && !data.status && !data.result) {
+                    request.put(config.api.host + config.api.comment.add, {
+                        isUp: me.state.isUp,
+                        content: me.state.content,
+                        userId: user._id,
+                        goodId: me.state.data.info.good._id
+                    }).then((data) => {
+                        if (data && data.status) {
+                            me.setState({
+                                isSending: false,
+                                content: '',
+                                modalVisible: false
+                            }, function () {
+                                Service.showToast('评论成功');
+                            });
+                        }
+                    }).catch((error) => {
+                        me.setState({
+                            isSending: false,
+                            modalVisible: false
+                        });
+                        AlertIOS.alert('留言失败,请稍后重试!');
+                    });
+                }
             })
         })
     }
@@ -492,6 +518,18 @@ const styles = StyleSheet.create({
         borderColor: '#ee735c',
         borderRadius: 4,
         color: '#ee735c',
+        fontSize: 18
+    },
+    submit_button_disable: {
+        width: width - 20,
+        padding: 10,
+        marginTop: 20,
+        marginBottom: 20,
+        marginLeft: 10,
+        borderWidth: 1,
+        borderColor: '#666',
+        borderRadius: 4,
+        color: '#666',
         fontSize: 18
     }
 });
