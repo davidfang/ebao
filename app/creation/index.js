@@ -8,6 +8,7 @@ import PubSub from 'pubsub-js';
 import Detail from './Detail';
 import request from '../common/request';
 import config from '../common/config';
+import Service from '../common/service';
 
 export default class Home extends Component {
     constructor(props) {
@@ -151,21 +152,33 @@ export default class Home extends Component {
         const {navigator} = this.props;
 
         if (navigator) {
-            let data = {};
-            data.good = rowData;
-            data.publisher = rowData.publisher;
+            let user = {};
+            let paramData = {};
+            paramData.publisher = rowData.publisher;
 
             AsyncStorage.getItem('user').then((userJson) => {
-                navigator.push({
-                    name: 'detail',
-                    component: Detail,
-                    params: {
-                        data: {
-                            info: data
-                        },
-                        userId: JSON.parse(userJson)._id
-                    }
-                });
+                user = JSON.parse(userJson);
+                return request.get(config.api.host + config.api.good.getById, {
+                    goodId: rowData._id
+                })
+            }).then((data) => {
+                if (data && data.status) {
+                    paramData.good = data.result;
+                    navigator.push({
+                        name: 'detail',
+                        component: Detail,
+                        params: {
+                            data: {
+                                info: paramData
+                            },
+                            userId: user._id
+                        }
+                    });
+                } else {
+                    Service.showToast('网络出错,请稍后再试');
+                }
+            }).catch((error) => {
+                Service.showToast('网络出错,请稍后再试');
             });
         }
     }

@@ -48,6 +48,7 @@ module.exports = {
         },
         good: {
             list: 'goods',
+            getById: 'good',
             publish: 'good'
         },
         address: {

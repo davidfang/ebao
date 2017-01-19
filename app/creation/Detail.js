@@ -19,12 +19,12 @@ export default class Detail extends Component {
         if (comments && comments.length) {
             for (let i = 0; i < comments.length; i++) {
                 if (comments[i].commentator == this.props.userId) {
-                    isUp = true;
+                    isUp = Boolean(comments[i].isUp);
                     break;
                 }
             }
         }
-        
+
         this.state = {
             data: this.props.data,
 
@@ -204,18 +204,30 @@ export default class Detail extends Component {
                 });
             }).then((data) => {
                 if (data && data.status) {
-
+                    request.post(config.api.host + config.api.comment.update, {
+                        isUp: me.state.isUp,
+                        userId: user._id,
+                        goodId: me.state.data.info.good._id
+                    }).then((data) => {
+                        if (data && data.status) {
+                            if (me.state.isUp) {
+                                Service.showToast('收藏成功');
+                            } else {
+                                Service.showToast('取消成功');
+                            }
+                        }
+                    })
                 } else if (data && !data.status && !data.result) {
-                    return request.put(config.api.host + config.api.comment.add, {
+                    request.put(config.api.host + config.api.comment.add, {
                         isUp: me.state.isUp,
                         content: me.state.content,
                         userId: user._id,
                         goodId: me.state.data.info.good._id
+                    }).then((data) => {
+                        if (data && data.status) {
+                            Service.showToast('收藏成功');
+                        }
                     });
-                }
-            }).then((data) => {
-                if (data && data.status) {
-                    Service.showToast('收藏成功');
                 }
             })
         });
