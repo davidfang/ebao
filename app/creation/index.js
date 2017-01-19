@@ -1,4 +1,4 @@
-import {View, Text, Image, ListView, TouchableHighlight, Navigator, StyleSheet, Dimensions} from "react-native";
+import {View, Text, Image, ListView, TouchableHighlight, Navigator, StyleSheet, Dimensions, AsyncStorage} from "react-native";
 import React, {Component} from "react";
 import {TabViewAnimated, TabBarTop} from "react-native-tab-view";
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -155,14 +155,17 @@ export default class Home extends Component {
             data.good = rowData;
             data.publisher = rowData.publisher;
 
-            navigator.push({
-                name: 'detail',
-                component: Detail,
-                params: {
-                    data: {
-                        info: data
+            AsyncStorage.getItem('user').then((userJson) => {
+                navigator.push({
+                    name: 'detail',
+                    component: Detail,
+                    params: {
+                        data: {
+                            info: data
+                        },
+                        userId: JSON.parse(userJson)._id
                     }
-                }
+                });
             });
         }
     }
