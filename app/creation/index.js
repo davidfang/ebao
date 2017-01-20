@@ -62,7 +62,7 @@ export default class Home extends Component {
         switch (route.key) {
             case '1':
                 return (
-                    <View style={styles.container, {marginBottom: 50}}>
+                    <View style={[styles.container, styles.margin_bottom]}>
                         <ListView dataSource={this.state.dataSource} enableEmptySections={true}
                                   automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
                                   renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
@@ -72,7 +72,7 @@ export default class Home extends Component {
                 );
             case '2':
                 return (
-                    <View style={styles.container}>
+                    <View style={[styles.container, styles.margin_bottom]}>
                         <ListView dataSource={this.state.dataSource} enableEmptySections={true}
                                   automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
                                   renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
@@ -82,7 +82,7 @@ export default class Home extends Component {
                 );
             case '3':
                 return (
-                    <View style={styles.container}>
+                    <View style={[styles.container, styles.margin_bottom]}>
                         <ListView dataSource={this.state.dataSource} enableEmptySections={true}
                                   automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
                                   renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
@@ -201,6 +201,9 @@ const initialLayout = {
 const styles = StyleSheet.create({
     container: {
         flex: 1
+    },
+    margin_bottom: {
+        marginBottom: 50
     },
     header: {
         paddingTop: 25,
