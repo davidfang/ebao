@@ -28,6 +28,7 @@ export default class Detail extends Component {
         this.state = {
             data: this.props.data,
 
+            comments: [],
             dataSource: ds.cloneWithRows([]),
 
             isUp: isUp,
@@ -134,9 +135,13 @@ export default class Detail extends Component {
                         <Text style={styles.item_text} onPress={this._focus.bind(this, true)}>留言</Text>
                     </View>
                 </View>
-                <View style={styles.comments_area}>
-                    <Text style={styles.comments_area_title}>留言</Text>
-                </View>
+                {
+                    this.state.comments.length > 0 ?
+                        <View style={styles.comments_area}>
+                            <Text style={styles.comments_area_title}>留言</Text>
+                        </View> :
+                        null
+                }
             </View>
         );
     }
@@ -144,10 +149,10 @@ export default class Detail extends Component {
     _renderItem(row) {
         return (
             <View style={styles.comments_reply_box} key={row._id}>
-                <Image style={styles.comments_reply_avatar} source={{uri: row.replyBy.avatar}}/>
+                <Image style={styles.comments_reply_avatar} source={{uri: 'http://dummyimage.com/640X640/86f279)'}}/>
                 <View style={styles.comment_reply_desc_box}>
-                    <Text style={styles.comments_reply_nickname}>{row.replyBy.nickname}</Text>
-                    <Text style={styles.comments_reply_content}>{row.content}</Text>
+                    <Text style={styles.comments_reply_nickname}>{row.user.name}</Text>
+                    <Text style={styles.comments_reply_content}>{row.content.body}</Text>
                 </View>
             </View>
         );
@@ -176,14 +181,11 @@ export default class Detail extends Component {
 
     _fetchData() {
         let me = this;
-        let url = config.api.base + config.api.comments;
-
-        request.get(url, {
-            id: 124,
-            accessToken: '123'
-        }).then(function (data) {
-            if (data && data.success) {
-                let comments = data.data;
+        request.get(config.api.host + config.api.comment.getAllByGoodId, {
+            goodId: me.state.data.info.good._id
+        }).then((data) => {
+            if (data && data.status) {
+                let comments = data.result;
                 if (comments && comments.length > 0) {
                     me.setState({
                         comments: comments,

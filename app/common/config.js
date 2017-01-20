@@ -57,6 +57,7 @@ module.exports = {
         },
         comment: {
             getByUserIdAndGoodId: 'comment',
+            getAllByGoodId: 'comments',
             add: 'comment',
             update: 'comment'
         }
