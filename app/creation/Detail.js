@@ -31,8 +31,9 @@ export default class Detail extends Component {
             comments: [],
             dataSource: ds.cloneWithRows([]),
 
+            commentModalVisible: false,
+            cartModalVisible: false,
             isUp: isUp,
-            modalVisible: false,
             isSending: false,
             content: '',
 
@@ -72,10 +73,10 @@ export default class Detail extends Component {
                           renderHeader={this._renderHeader.bind(this, data)}
                           style={styles.margin_bottom}
                 />
-                <Modal animationType={'fade'} visible={this.state.modalVisible}
-                       onRequestClose={() => {this._setModalVisible(false)}}>
+                <Modal animationType={'fade'} visible={this.state.commentModalVisible}
+                       onRequestClose={() => {this.setState({commentModalVisible: false})}}>
                     <View style={styles.model_container}>
-                        <Icon onPress={this._closeModal.bind(this)} name="ios-close-outline"
+                        <Icon onPress={() => {this.setState({commentModalVisible: false})}} name="ios-close-outline"
                               style={styles.modal_close_icon} />
                         <View style={styles.comments_box}>
                             <View style={styles.comments_item}>
@@ -123,16 +124,21 @@ export default class Detail extends Component {
                     <Progress.Bar style={styles.item_desc_margin} progress={0.1} height={3} width={355} color={'#ee735c'}/>
                 </View>
                 <View style={styles.item_comments}>
-                    <View style={[styles.item_box, styles.item_border_center]}>
+                    <View style={[styles.item_box, styles.item_box_large, styles.item_border_right]}>
+                        <Icon style={styles.item_icon} size={28} name="ios-cart-outline"
+                              onPress={this._addToCart.bind(this)}/>
+                        <Text style={styles.item_text} onPress={this._addToCart.bind(this)}>加入购物车</Text>
+                    </View>
+                    <View style={[styles.item_box, styles.item_box_small]}>
                         <Icon style={[styles.item_icon, this.state.isUp ? styles.item_like_color : null]}
                               size={28} name={this.state.isUp ? "ios-heart" : "ios-heart-outline"}
-                              onPress={this._up.bind(this, true)}/>
-                        <Text style={styles.item_text} onPress={this._up.bind(this, true)}>收藏</Text>
+                              onPress={this._up.bind(this)}/>
+                        <Text style={styles.item_text} onPress={this._up.bind(this)}>收藏</Text>
                     </View>
-                    <View style={styles.item_box}>
+                    <View style={[styles.item_box, styles.item_box_small, styles.item_border_left]}>
                         <Icon style={styles.item_icon} name="ios-chatboxes-outline" size={28}
-                              onPress={this._focus.bind(this, true)}/>
-                        <Text style={styles.item_text} onPress={this._focus.bind(this, true)}>留言</Text>
+                              onPress={() => {this.setState({commentModalVisible: true})}}/>
+                        <Text style={styles.item_text} onPress={() => {this.setState({commentModalVisible: true})}}>留言</Text>
                     </View>
                 </View>
                 {
@@ -198,6 +204,10 @@ export default class Detail extends Component {
         });
     }
 
+    _addToCart() {
+
+    }
+
     _up() {
         let me = this;
         let user = null;
@@ -241,20 +251,6 @@ export default class Detail extends Component {
         });
     }
 
-    _focus() {
-        this._setModalVisible(true);
-    }
-
-    _closeModal() {
-        this._setModalVisible(false);
-    }
-    
-    _setModalVisible(isVisible) {
-        this.setState({
-            modalVisible: isVisible
-        });
-    }
-
     _submit() {
         let me = this;
 
@@ -280,7 +276,7 @@ export default class Detail extends Component {
                             me.setState({
                                 isSending: false,
                                 content: '',
-                                modalVisible: false
+                                commentModalVisible: false
                             }, function () {
                                 Service.showToast('评论成功');
                             });
@@ -288,7 +284,7 @@ export default class Detail extends Component {
                     }).catch((error) => {
                         me.setState({
                             isSending: false,
-                            modalVisible: false
+                            commentModalVisible: false
                         });
                         AlertIOS.alert('留言失败,请稍后重试!');
                     });
@@ -303,7 +299,7 @@ export default class Detail extends Component {
                             me.setState({
                                 isSending: false,
                                 content: '',
-                                modalVisible: false
+                                commentModalVisible: false
                             }, function () {
                                 Service.showToast('评论成功');
                             });
@@ -311,7 +307,7 @@ export default class Detail extends Component {
                     }).catch((error) => {
                         me.setState({
                             isSending: false,
-                            modalVisible: false
+                            commentModalVisible: false
                         });
                         AlertIOS.alert('留言失败,请稍后重试!');
                     });
@@ -403,7 +399,6 @@ const styles = StyleSheet.create({
     item_box: {
         padding: 10,
         marginTop: 10,
-        flex: 1,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
@@ -413,9 +408,19 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#666"
     },
-    item_border_center: {
+    item_box_large: {
+        flex: 3
+    },
+    item_box_small: {
+        flex: 2
+    },
+    item_border_right: {
         borderRightWidth: 1,
         borderRightColor: '#666'
+    },
+    item_border_left: {
+        borderLeftWidth: 1,
+        borderLeftColor: '#666'
     },
     item_text: {
         fontSize: 18,
