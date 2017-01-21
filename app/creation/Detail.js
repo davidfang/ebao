@@ -70,7 +70,7 @@ export default class Detail extends Component {
                           automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
                           renderRow={(rowData) => this._renderItem(rowData)}
                           renderHeader={this._renderHeader.bind(this, data)}
-                          style={{marginBottom: 60}}
+                          style={styles.margin_bottom}
                 />
                 <Modal animationType={'fade'} visible={this.state.modalVisible}
                        onRequestClose={() => {this._setModalVisible(false)}}>
@@ -332,6 +332,9 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         backgroundColor: '#ffffff'
+    },
+    margin_bottom: {
+        marginBottom: 50
     },
     header: {
         flexDirection: 'row',
