@@ -1,5 +1,5 @@
-import {StyleSheet, View, Text, Dimensions, TouchableOpacity,
-    ListView, Image, TextInput, Modal, AlertIOS, AsyncStorage} from 'react-native';
+import {StyleSheet, View, Text, Dimensions, TouchableOpacity, ListView, Image, TextInput, Modal, AlertIOS,
+    AsyncStorage} from 'react-native';
 import React, {Component} from 'react';
 import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -205,7 +205,24 @@ export default class Detail extends Component {
     }
 
     _addToCart() {
+        let me = this;
+        let user = null
 
+        AsyncStorage.getItem('user').then((userJson) => {
+            user = JSON.parse(userJson);
+            return request.get(config.api.host + config.api.cart.getByUserIdAndGoodId, {
+                userId: user._id,
+                goodId: me.state.data.info.good._id
+            });
+        }).then((data) => {
+            if (data && data.status) {
+                if (data.result.count > 0) {
+                    Service.showToast('已在您的购物车中,请查看');
+                } else {
+                    
+                }
+            }
+        })
     }
 
     _up() {

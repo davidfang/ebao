@@ -60,6 +60,11 @@ module.exports = {
             getAllByGoodId: 'comments',
             add: 'comment',
             update: 'comment'
+        },
+        cart: {
+            getByUserIdAndGoodId: 'cart',
+            add: 'cart',
+            update: 'cart'
         }
     },
 
