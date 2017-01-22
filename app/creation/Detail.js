@@ -4,6 +4,7 @@ import React, {Component} from 'react';
 import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
+import PubSub from 'pubsub-js';
 import User from '../account/User';
 import config from '../common/config';
 import request from '../common/request';
@@ -105,7 +106,11 @@ export default class Detail extends Component {
     }
 
     componentDidMount() {
+        let me = this;
         this._fetchData();
+        PubSub.subscribe('update_comments', function () {
+            me._fetchData();
+        })
     }
 
     _renderHeader(data) {
@@ -219,7 +224,7 @@ export default class Detail extends Component {
                 if (data.result.count > 0) {
                     Service.showToast('已在您的购物车中,请查看');
                 } else {
-                    
+
                 }
             }
         })
@@ -282,7 +287,6 @@ export default class Detail extends Component {
                 });
             }).then((data) => {
                 if (data && data.status) {
-                    console.log('jiangwu', me.state);
                     request.post(config.api.host + config.api.comment.update, {
                         isUp: me.state.isUp,
                         content: me.state.content,
@@ -296,6 +300,7 @@ export default class Detail extends Component {
                                 commentModalVisible: false
                             }, function () {
                                 Service.showToast('评论成功');
+                                PubSub.publish('update_comments');
                             });
                         }
                     }).catch((error) => {
