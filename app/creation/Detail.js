@@ -122,9 +122,9 @@ export default class Detail extends Component {
                     </Text>
                     <View style={[styles.item_state, styles.item_desc_margin]}>
                         <Text style={styles.item_text_font}>
-                            总需:{data.info.good.price}人次
+                            总需:{data.info.good.price}份数
                         </Text>
-                        <Text style={styles.item_text_font}>剩余人次:{data.info.good.price}</Text>
+                        <Text style={styles.item_text_font}>剩余份数:{data.info.good.price}</Text>
                     </View>
                     <Progress.Bar style={styles.item_desc_margin} progress={0.1} height={3} width={355} color={'#ee735c'}/>
                 </View>
@@ -222,10 +222,36 @@ export default class Detail extends Component {
         }).then((data) => {
             if (data && data.status) {
                 if (data.result.count > 0) {
-                    Service.showToast('已在您的购物车中,请查看');
+                    Service.showToast('已在您的购物车中,请确认购买份数');
                 } else {
-
+                    request.post(config.api.host + config.api.cart.update, {
+                        count: 1,
+                        userId: user._id,
+                        goodId: me.state.data.info.good._id
+                    }).then((data) => {
+                        if (data && data.status) {
+                            Service.showToast('已添加到您的购物车');
+                        } else {
+                            Service.showToast('网络出错,请稍后重试');
+                        }
+                    }).catch((error) => {
+                        Service.showToast('网络出错,请稍后重试');
+                    });
                 }
+            } else if (data && !data.status && !data.result) {
+                request.put(config.api.host + config.api.cart.add, {
+                    count: 1,
+                    userId: user._id,
+                    goodId: me.state.data.info.good._id
+                }).then((data) => {
+                    if (data && data.status) {
+                        Service.showToast('已添加到您的购物车');
+                    } else {
+                        Service.showToast('网络出错,请稍后重试');
+                    }
+                }).catch((error) => {
+                    Service.showToast('网络出错,请稍后重试');
+                });
             }
         })
     }

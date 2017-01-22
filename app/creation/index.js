@@ -19,7 +19,7 @@ export default class Home extends Component {
             routes: [
                 {key: '1', title: '最新'},
                 {key: '2', title: '人气'},
-                {key: '3', title: '剩余人次'},
+                {key: '3', title: '剩余份数'},
             ],
 
             dataSource: ds.cloneWithRows([]),
@@ -123,12 +123,12 @@ export default class Home extends Component {
                                 {rowData.desc}
                             </Text>
                             <Text style={[styles.item_total, styles.item_text_font, styles.item_desc_margin]}>
-                                总需{rowData.price}人次
+                                总需{rowData.price}份数
                             </Text>
                             <Progress.Bar style={styles.item_desc_margin} progress={0.3} height={3} width={214} color={'#ee735c'}/>
                             <View style={[styles.item_state, styles.item_desc_margin]}>
-                                <Text style={styles.item_text_font}>已参与人次:0</Text>
-                                <Text style={styles.item_remain}>剩余人次:{rowData.price}</Text>
+                                <Text style={styles.item_text_font}>已参与份数:0</Text>
+                                <Text style={styles.item_remain}>剩余份数:{rowData.price}</Text>
                             </View>
                         </View>
                     </View>
