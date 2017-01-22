@@ -63,6 +63,7 @@ module.exports = {
         },
         cart: {
             getByUserIdAndGoodId: 'cart',
+            getAllByUserId: 'carts',
             add: 'cart',
             update: 'cart'
         }

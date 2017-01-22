@@ -1,38 +1,22 @@
-import {View, Text, TextInput, ListView, Image, TouchableHighlight, StyleSheet, Dimensions, NativeModules} from 'react-native';
+import {View, Text, TextInput, ListView, Image, TouchableHighlight, StyleSheet, Dimensions, NativeModules,
+    AsyncStorage} from 'react-native';
 import React, {Component} from 'react';
 import Button from 'react-native-button';
 import CameraRollPicker from 'react-native-camera-roll-picker';
-
 import Detail from '../creation/Detail';
 import ConfrimOrder from '../cart/ComfirmOrder';
+import request from '../common/request';
+import config from '../common/config';
+import Service from '../common/service';
 
 export default class Cart extends Component {
     constructor(props) {
         super(props);
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            dataSource: ds.cloneWithRows([
-                {
-                    image: require('../../assets/images/creation/list_item.jpg'),
-                    desc: '苹果MacBook Pro 13.3英寸笔记本电脑 深空灰色(Core i5处理器/256G SSD闪存 屏幕)',
-                    total: 1000,
-                    hasBeen: 100
-                },
-                {
-                    image: require('../../assets/images/creation/list_item.jpg'),
-                    desc: '苹果MacBook Pro 13.3英寸笔记本电脑 深空灰色(Core i5处理器/256G SSD闪存)',
-                    total: 1000,
-                    hasBeen: 100
-                },
-                {
-                    image: require('../../assets/images/creation/list_item.jpg'),
-                    desc: '苹果MacBook Pro 13.3英寸笔记本电脑 深空灰色(Core i5处理器/256G SSD闪存)',
-                    total: 1000,
-                    hasBeen: 100
-                }
-            ]),
-
-            number: "1"
+            dataSource: ds.cloneWithRows([]),
+            goodCount: 0,
+            number: '1'
         };
     }
 
@@ -45,9 +29,9 @@ export default class Cart extends Component {
                 <View style={styles.body}>
                     <View style={[styles.footer, styles.backgound_white, styles.border_bottom,
                         styles.padding_left_and_right]}>
-                        <Text style={styles.footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
+                        <Text style={styles.footer_desc}>共{this.state.goodCount}件宝贝,合计56元</Text>
                         <View>
-                            <Button style={styles.footer_btn} onPress={this._gotoView.bind(this, 'confirmOrder')}>结算</Button>
+                            <Button style={styles.footer_btn} onPress={this._gotoView.bind(this, 'confirmOrder')}>去结算</Button>
                         </View>
                     </View>
                     <ListView dataSource={this.state.dataSource} enableEmptySections={true}
@@ -60,18 +44,22 @@ export default class Cart extends Component {
         );
     }
 
+    componentDidMount() {
+        this._fetchData();
+    }
+
     _renderItem(rowData, rowID) {
         return (
             <View style={styles.item}>
                 <TouchableHighlight style={styles.item_info} underlayColor="#fff" onPress={this._gotoView.bind(this, 'detail')}>
-                    <Image style={styles.item_image} source={rowData.image}/>
+                    <Image style={styles.item_image} source={require('../../assets/images/creation/list_item.jpg')}/>
                 </TouchableHighlight>
                 <View style={styles.item_part}>
                     <View style={styles.item_desc}>
-                        <Text style={styles.item_desc_text} numberOfLines={2}>{rowData.desc}</Text>
+                        <Text style={styles.item_desc_text} numberOfLines={2}>{rowData.goodId.desc}</Text>
                     </View>
                     <View style={styles.item_number}>
-                        <Text style={styles.item_text}>总需人次{rowData.total}</Text>
+                        <Text style={styles.item_text}>总需人次{rowData.goodId.price}</Text>
                         <Text style={styles.item_text}>剩余人次{rowData.hasBeen}</Text>
                     </View>
                     <View style={styles.item_join}>
@@ -95,6 +83,27 @@ export default class Cart extends Component {
                 </View>
             </View>
         );
+    }
+
+    _fetchData() {
+        let me = this;
+        let user = null;
+
+        AsyncStorage.getItem('user').then((userJson) => {
+            user = JSON.parse(userJson);
+            return request.get(config.api.host + config.api.cart.getAllByUserId, {
+                userId: user._id
+            });
+        }).then((data) => {
+            if (data && data.status) {
+                me.setState({
+                    goodCount: data.result.length,
+                    dataSource: me.state.dataSource.cloneWithRows(data.result)
+                });
+            }
+        }).catch((error) => {
+            console.log(error);
+        })
     }
 
     _gotoView(name) {

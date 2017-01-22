@@ -2,32 +2,16 @@ import {View, Text, Image, TouchableOpacity, TouchableHighlight, ListView, Style
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
+import request from '../common/request';
+import config from '../common/config';
+import Service from '../common/service';
 
 export default class ComfirmOrder extends Component {
     constructor(props) {
         super(props);
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            dataSource: ds.cloneWithRows([
-                {
-                    image: require('../../assets/images/creation/list_item.jpg'),
-                    desc: '苹果MacBook Pro 13.3英寸笔记本电脑 深空灰色(Core i5处理器/256G SSD闪存 屏幕)',
-                    total: 1000,
-                    hasBeen: 100
-                },
-                {
-                    image: require('../../assets/images/creation/list_item.jpg'),
-                    desc: '苹果MacBook Pro 13.3英寸笔记本电脑 深空灰色(Core i5处理器/256G SSD闪存)',
-                    total: 1000,
-                    hasBeen: 100
-                },
-                {
-                    image: require('../../assets/images/creation/list_item.jpg'),
-                    desc: '苹果MacBook Pro 13.3英寸笔记本电脑 深空灰色(Core i5处理器/256G SSD闪存)',
-                    total: 1000,
-                    hasBeen: 100
-                }
-            ])
+            dataSource: ds.cloneWithRows([])
         };
     }
 
@@ -61,7 +45,7 @@ export default class ComfirmOrder extends Component {
                             styles.padding_left_and_right]}>
                             <Text style={styles.footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
                             <View>
-                                <Button style={styles.footer_btn} onPress={this._check.bind(this)}>结算</Button>
+                                <Button style={styles.footer_btn} onPress={this._check.bind(this)}>提交订单</Button>
                             </View>
                         </View>
                         <ListView dataSource={this.state.dataSource} enableEmptySections={true}
@@ -75,17 +59,21 @@ export default class ComfirmOrder extends Component {
         );
     }
 
+    componentDidMount() {
+
+    }
+
     _renderItem(rowData, rowID) {
         return (
             <View style={styles.item}>
                 <TouchableHighlight style={styles.item_info} underlayColor="#fff">
-                    <Image style={styles.item_image} source={rowData.image}/>
+                    <Image style={styles.item_image} source={require('../../assets/images/creation/list_item.jpg')}/>
                 </TouchableHighlight>
                 <View style={styles.item_part}>
                     <View style={styles.item_desc}>
                         <Text style={styles.item_desc_text} numberOfLines={2}>{rowData.desc}</Text>
                     </View>
-                    <Text style={styles.item_part_number}>参与1人次</Text>
+                    <Text style={styles.item_part_number}>参与1份</Text>
                 </View>
             </View>
         );
