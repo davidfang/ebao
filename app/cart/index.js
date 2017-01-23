@@ -3,6 +3,7 @@ import {View, Text, TextInput, ListView, Image, TouchableHighlight, StyleSheet, 
 import React, {Component} from 'react';
 import Button from 'react-native-button';
 import CameraRollPicker from 'react-native-camera-roll-picker';
+import PubSub from 'pubsub-js';
 import Detail from '../creation/Detail';
 import ConfrimOrder from '../cart/ComfirmOrder';
 import request from '../common/request';
@@ -54,7 +55,11 @@ export default class Cart extends Component {
     }
 
     componentDidMount() {
+        let me = this;
         this._fetchData();
+        PubSub.subscribe('update_carts', function () {
+            me._fetchData();
+        });
     }
 
     _renderItem(rowData, rowID) {
@@ -106,7 +111,6 @@ export default class Cart extends Component {
                 userId: user._id
             });
         }).then((data) => {
-            console.log('data', data)
             if (data && data.status) {
                 let buyNumbers = {};
                 let totalPay = 0;
@@ -114,8 +118,6 @@ export default class Cart extends Component {
                     buyNumbers[data.result[i].goodId._id] = data.result[i].count;
                     totalPay += parseInt(data.result[i].count);
                 }
-
-                console.log('jiangwu', data.result.length);
                 me.setState({
                     dataSource: me.state.dataSource.cloneWithRows(data.result),
                     goodCount: data.result.length,

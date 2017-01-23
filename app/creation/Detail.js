@@ -110,7 +110,7 @@ export default class Detail extends Component {
         this._fetchData();
         PubSub.subscribe('update_comments', function () {
             me._fetchData();
-        })
+        });
     }
 
     _renderHeader(data) {
@@ -231,6 +231,7 @@ export default class Detail extends Component {
                     }).then((data) => {
                         if (data && data.status) {
                             Service.showToast('已添加到您的购物车');
+                            PubSub.publish('update_carts');
                         } else {
                             Service.showToast('网络出错,请稍后重试');
                         }
@@ -246,6 +247,7 @@ export default class Detail extends Component {
                 }).then((data) => {
                     if (data && data.status) {
                         Service.showToast('已添加到您的购物车');
+                        PubSub.publish('update_carts');
                     } else {
                         Service.showToast('网络出错,请稍后重试');
                     }
