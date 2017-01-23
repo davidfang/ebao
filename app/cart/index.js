@@ -15,34 +15,42 @@ export default class Cart extends Component {
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
             dataSource: ds.cloneWithRows([]),
-            goodCount: 0,
+            goodCount: 1,
             totalPay: 0,
             buyNumbers: null
         }
     }
 
     render() {
-        return (
-            <View style={styles.container}>
-                <View style={[styles.header, styles.border_bottom]}>
-                    <Text style={styles.header_title}>购物车</Text>
-                </View>
-                <View style={styles.body}>
-                    <View style={[styles.footer, styles.backgound_white, styles.border_bottom,
-                        styles.padding_left_and_right]}>
-                        <Text style={styles.footer_desc}>共{this.state.goodCount}件宝贝,您需支付{this.state.totalPay}元开抢</Text>
-                        <View>
-                            <Button style={styles.footer_btn} onPress={this._gotoView.bind(this, 'confirmOrder')}>去结算</Button>
-                        </View>
+        if (this.state.goodCount) {
+            return (
+                <View style={styles.container}>
+                    <View style={[styles.header, styles.border_bottom]}>
+                        <Text style={styles.header_title}>购物车</Text>
                     </View>
-                    <ListView dataSource={this.state.dataSource} enableEmptySections={true}
-                              automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
-                              renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
-                              renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
-                    />
+                    <View style={styles.body}>
+                        <View style={[styles.footer, styles.backgound_white, styles.border_bottom,
+                        styles.padding_left_and_right]}>
+                            <Text style={styles.footer_desc}>共{this.state.goodCount}件宝贝,您需支付{this.state.totalPay}元开抢</Text>
+                            <View>
+                                <Button style={styles.footer_btn} onPress={this._gotoView.bind(this, 'confirmOrder')}>去结算</Button>
+                            </View>
+                        </View>
+                        <ListView dataSource={this.state.dataSource} enableEmptySections={true}
+                                  automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
+                                  renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
+                                  renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
+                        />
+                    </View>
                 </View>
-            </View>
-        );
+            ) ;
+        } else {
+            return (
+                <View style={[styles.container,styles.center]}>
+                    <Text style={styles.empty_text}>您的购物车空空如也,赶快去夺宝吧</Text>
+                </View>
+            );
+        }
     }
 
     componentDidMount() {
@@ -98,6 +106,7 @@ export default class Cart extends Component {
                 userId: user._id
             });
         }).then((data) => {
+            console.log('data', data)
             if (data && data.status) {
                 let buyNumbers = {};
                 let totalPay = 0;
@@ -106,16 +115,22 @@ export default class Cart extends Component {
                     totalPay += parseInt(data.result[i].count);
                 }
 
+                console.log('jiangwu', data.result.length);
                 me.setState({
                     dataSource: me.state.dataSource.cloneWithRows(data.result),
                     goodCount: data.result.length,
                     totalPay: totalPay,
                     buyNumbers: buyNumbers
                 });
+            } else if (data && !data.status && data.result == null){
+                me.setState({
+                    dataSource: me.state.dataSource.cloneWithRows([]),
+                    goodCount: 0
+                });
             }
         }).catch((error) => {
             console.log(error);
-        })
+        });
     }
 
     _gotoView(name) {
@@ -207,6 +222,10 @@ const width = Dimensions.get('window').width;
 const styles = StyleSheet.create({
     container: {
         flex: 1
+    },
+    center: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     border_top: {
         borderTopWidth: 1,
@@ -334,5 +353,9 @@ const styles = StyleSheet.create({
         color: '#ee735c',
         backgroundColor: '#ffffff',
         overflow:'hidden'
+    },
+    empty_text: {
+        color: '#ee735c',
+        fontSize: 18
     }
 });
