@@ -16,6 +16,7 @@ export default class Cart extends Component {
         this.state = {
             dataSource: ds.cloneWithRows([]),
             goodCount: 0,
+            totalPay: 0,
             buyNumbers: null
         }
     }
@@ -29,7 +30,7 @@ export default class Cart extends Component {
                 <View style={styles.body}>
                     <View style={[styles.footer, styles.backgound_white, styles.border_bottom,
                         styles.padding_left_and_right]}>
-                        <Text style={styles.footer_desc}>共{this.state.goodCount}件宝贝,合计56元</Text>
+                        <Text style={styles.footer_desc}>共{this.state.goodCount}件宝贝,您需支付{this.state.totalPay}元开抢</Text>
                         <View>
                             <Button style={styles.footer_btn} onPress={this._gotoView.bind(this, 'confirmOrder')}>去结算</Button>
                         </View>
@@ -99,13 +100,16 @@ export default class Cart extends Component {
         }).then((data) => {
             if (data && data.status) {
                 let buyNumbers = {};
+                let totalPay = 0;
                 for (let i in data.result) {
                     buyNumbers[data.result[i].goodId._id] = data.result[i].count;
+                    totalPay += parseInt(data.result[i].count);
                 }
 
                 me.setState({
                     dataSource: me.state.dataSource.cloneWithRows(data.result),
                     goodCount: data.result.length,
+                    totalPay: totalPay,
                     buyNumbers: buyNumbers
                 });
             }
@@ -146,19 +150,54 @@ export default class Cart extends Component {
     }
 
     _doNumber(type, goodId) {
+        let updateFlag = false;
+        let buyNumbers = this.state.buyNumbers;
         if (type === 'minus') {
-
-        } else {
-            let buyNumbers = this.state.buyNumbers;
             for (let id in buyNumbers) {
                 if (goodId == id) {
-                    buyNumbers[goodId]++;
+                    buyNumbers[goodId]--;
+                    updateFlag = true;
                     break;
                 }
             }
-            console.log(buyNumbers);
+        } else {
+            for (let id in buyNumbers) {
+                if (goodId == id) {
+                    buyNumbers[goodId]++;
+                    updateFlag = true;
+                    break;
+                }
+            }
+        }
+
+        if (updateFlag) {
             this.setState({
                 buyNumbers: buyNumbers
+            });
+
+            let user = null;
+            AsyncStorage.getItem('user').then((userJson) => {
+                user = JSON.parse(userJson);
+                return request.get(config.api.host + config.api.cart.getByUserIdAndGoodId, {
+                    userId: user._id,
+                    goodId: goodId
+                });
+            }).then((data) => {
+                if (data && data.status) {
+                    return request.post(config.api.host + config.api.cart.update, {
+                        userId: user._id,
+                        goodId: goodId,
+                        count: buyNumbers[goodId]
+                    })
+                } else {
+                    Service.showToast('网络出错,请稍后重试');
+                }
+            }).then((newCart) => {
+                if (!newCart) {
+                    Service.showToast('网络出错,请稍后重试');
+                }
+            }).catch((error) => {
+                Service.showToast('网络出错,请稍后重试');
             });
         }
     }
