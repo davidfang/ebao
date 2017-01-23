@@ -16,8 +16,8 @@ export default class Cart extends Component {
         this.state = {
             dataSource: ds.cloneWithRows([]),
             goodCount: 0,
-            number: '1'
-        };
+            buyNumbers: null
+        }
     }
 
     render() {
@@ -67,14 +67,16 @@ export default class Cart extends Component {
                         <View>
                             <View style={styles.item_btns}>
                                 <TouchableHighlight style={styles.item_btn} underlayColor="#fff"
-                                                    onPress={this._doNumber.bind(this, 'minus')}>
+                                                    onPress={this._doNumber.bind(this, 'minus', rowData.goodId._id)}>
                                     <Text style={styles.item_btn_text}>-</Text>
                                 </TouchableHighlight>
                                 <View style={styles.item_input_box}>
-                                    <TextInput style={styles.item_input_text} value={this.state.number} maxLength={2}/>
+                                    <TextInput style={styles.item_input_text}
+                                               value={this.state.buyNumbers ? this.state.buyNumbers[rowData.goodId._id].toString() : '1'}
+                                               maxLength={2}/>
                                 </View>
                                 <TouchableHighlight style={styles.item_btn} underlayColor="#fff"
-                                                    onPress={this._doNumber.bind(this, 'add')}>
+                                                    onPress={this._doNumber.bind(this, 'add', rowData.goodId._id)}>
                                     <Text style={styles.item_btn_text}>+</Text>
                                 </TouchableHighlight>
                             </View>
@@ -96,9 +98,15 @@ export default class Cart extends Component {
             });
         }).then((data) => {
             if (data && data.status) {
+                let buyNumbers = {};
+                for (let i in data.result) {
+                    buyNumbers[data.result[i].goodId._id] = data.result[i].count;
+                }
+
                 me.setState({
+                    dataSource: me.state.dataSource.cloneWithRows(data.result),
                     goodCount: data.result.length,
-                    dataSource: me.state.dataSource.cloneWithRows(data.result)
+                    buyNumbers: buyNumbers
                 });
             }
         }).catch((error) => {
@@ -137,23 +145,21 @@ export default class Cart extends Component {
         }
     }
 
-    _doNumber(type) {
+    _doNumber(type, goodId) {
         if (type === 'minus') {
-            if (parseInt(this.state.number) <= 1) {
-                return;
-            } else {
-                this.setState({
-                    number: parseInt(this.state.number) - 1
-                });
-            }
+
         } else {
-            if (parseInt(this.state.number) >= 99) {
-                return;
-            } else {
-                this.setState({
-                    number: parseInt(this.state.number) + 1
-                });
+            let buyNumbers = this.state.buyNumbers;
+            for (let id in buyNumbers) {
+                if (goodId == id) {
+                    buyNumbers[goodId]++;
+                    break;
+                }
             }
+            console.log(buyNumbers);
+            this.setState({
+                buyNumbers: buyNumbers
+            });
         }
     }
 }
