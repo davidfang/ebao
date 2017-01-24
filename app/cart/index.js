@@ -285,7 +285,6 @@ const styles = StyleSheet.create({
 
     },
     item_desc_text: {
-        flex: 1,
         fontSize: 16
     },
     item_number: {
