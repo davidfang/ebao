@@ -60,7 +60,7 @@ export default class Detail extends Component {
                     </TouchableOpacity>
                     <View style={styles.comment_desc_box}>
                         <Text style={styles.comments_nickname} onPress={this._gotoView.bind(this)}>
-                            {data.info.publisher.username}
+                            {data.info.user.username}
                         </Text>
                         <Text style={styles.comments_title}>3天前</Text>
                     </View>

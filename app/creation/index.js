@@ -154,7 +154,7 @@ export default class Home extends Component {
         if (navigator) {
             let user = {};
             let paramData = {};
-            paramData.publisher = rowData.publisher;
+            paramData.user = rowData.publisher;
 
             AsyncStorage.getItem('user').then((userJson) => {
                 user = JSON.parse(userJson);

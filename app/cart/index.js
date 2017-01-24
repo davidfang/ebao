@@ -16,16 +16,16 @@ export default class Cart extends Component {
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
             dataSource: ds.cloneWithRows([]),
-            goodCount: 1,
+            goodCount: null,
             totalPay: 0,
             buyNumbers: null
         }
     }
 
     render() {
-        if (this.state.goodCount) {
+        if (this.state.goodCount == null || this.state.goodCount) {
             return (
-                <View style={styles.container}>
+                <View style={[styles.container, styles.margin_bottom]}>
                     <View style={[styles.header, styles.border_bottom]}>
                         <Text style={styles.header_title}>购物车</Text>
                     </View>
@@ -65,12 +65,14 @@ export default class Cart extends Component {
     _renderItem(rowData, rowID) {
         return (
             <View style={styles.item}>
-                <TouchableHighlight style={styles.item_info} underlayColor="#fff" onPress={this._gotoView.bind(this, 'detail')}>
+                <TouchableHighlight style={styles.item_info} underlayColor="#fff" onPress={this._gotoView.bind(this, 'detail', rowData)}>
                     <Image style={styles.item_image} source={require('../../assets/images/creation/list_item.jpg')}/>
                 </TouchableHighlight>
                 <View style={styles.item_part}>
                     <View style={styles.item_desc}>
-                        <Text style={styles.item_desc_text} numberOfLines={2}>{rowData.goodId.desc}</Text>
+                        <Text style={styles.item_desc_text} numberOfLines={2} onPress={this._gotoView.bind(this, 'detail', rowData)}>
+                            {rowData.goodId.desc}
+                        </Text>
                     </View>
                     <View style={styles.item_number}>
                         <Text style={styles.item_text}>总需人次{rowData.goodId.price}</Text>
@@ -135,45 +137,45 @@ export default class Cart extends Component {
         });
     }
 
-    _gotoView(name) {
+    _gotoView(name, rowData) {
         const {navigator} = this.props;
 
         if (navigator) {
-            let info = {
+            let message = {
                 name: name
             };
 
             if (name === 'detail') {
-                info.component = Detail;
-                info.params = {
-                    //TODO: 数据都是假的,真实场景下,应该是Good表带出相关信息
+                message.component = Detail;
+                message.params = {
                     data: {
-                        "title":"信象然争江点强上传导细每内好强克下。委年但类土器门题化家员音些。共金四际强立般都一位以体在标料次。",
-                        "_id":"220000200801184370",
-                        "video":"http://video.iblack7.com/video_hcwijdwneqantgb4yqgx.mp4",
-                        "author": {
-                            "avatar":"http://dummyimage.com/640X640/86f279)",
-                            "nickname":"Jason White"
-                        },
-                        "thumb":"http://dummyimage.com/1280x720/f279a9)"
+                        info: {
+                            user: rowData.buyer,
+                            good: rowData.goodId
+                        }
                     }
                 }
             } else if (name === 'confirmOrder') {
-                info.component = ConfrimOrder;
+                message.component = ConfrimOrder;
             }
 
-            navigator.push(info);
+            navigator.push(message);
         }
     }
 
     _doNumber(type, goodId) {
-        let updateFlag = false;
+        let limitFlag = 0;
+        let updateFlag = 0;
         let buyNumbers = this.state.buyNumbers;
         if (type === 'minus') {
             for (let id in buyNumbers) {
                 if (goodId == id) {
-                    buyNumbers[goodId]--;
-                    updateFlag = true;
+                    if (buyNumbers[goodId] == 1) {
+                        limitFlag = -1;
+                    } else {
+                        buyNumbers[goodId]--;
+                        updateFlag = -1;
+                    }
                     break;
                 }
             }
@@ -181,15 +183,21 @@ export default class Cart extends Component {
             for (let id in buyNumbers) {
                 if (goodId == id) {
                     buyNumbers[goodId]++;
-                    updateFlag = true;
+                    updateFlag = 1;
                     break;
                 }
             }
         }
 
+        if (limitFlag == -1) {
+            Service.showToast('最少购买一份');
+            return;
+        }
+
         if (updateFlag) {
             this.setState({
-                buyNumbers: buyNumbers
+                buyNumbers: buyNumbers,
+                totalPay: this.state.totalPay + updateFlag
             });
 
             let user = null;
@@ -246,6 +254,9 @@ const styles = StyleSheet.create({
     },
     margin_top: {
         marginTop: 15,
+    },
+    margin_bottom: {
+        marginBottom: 50
     },
     header: {
         paddingTop: 25,
