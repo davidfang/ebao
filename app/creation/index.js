@@ -23,6 +23,8 @@ export default class Home extends Component {
             ],
 
             dataSource: ds.cloneWithRows([]),
+            starDataSource: ds.cloneWithRows([]),
+            leftDataSource: ds.cloneWithRows([]),
 
             progress: 0
         };
@@ -73,7 +75,7 @@ export default class Home extends Component {
             case '2':
                 return (
                     <View style={[styles.container, styles.margin_bottom]}>
-                        <ListView dataSource={this.state.dataSource} enableEmptySections={true}
+                        <ListView dataSource={this.state.starDataSource} enableEmptySections={true}
                                   automaticallyAdjustContentInsets={false} showsVerticalScrollIndicator={false}
                                   renderRow={(rowData, sectionID, rowID) => this._renderItem(rowData, rowID)}
                                   renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.item_separator} />}
@@ -141,8 +143,23 @@ export default class Home extends Component {
         var me = this;
         request.get(config.api.host + config.api.good.list).then((data) => {
             if (data && data.status) {
+                let starDataSource = [];
+                for (let i in data.result) {
+                    let stars = 0;
+                    for (let j in data.result[i].comments) {
+                        if (data.result[i].comments[j].isUp) {
+                            stars++;
+                        }
+                    }
+                    if (stars != 0) {
+                        data.result[i].stars = stars;
+                        starDataSource.push(data.result[i]);
+                    }
+                }
+
                 me.setState({
-                    dataSource: me.state.dataSource.cloneWithRows(data.result)
+                    dataSource: me.state.dataSource.cloneWithRows(data.result),
+                    starDataSource: me.state.starDataSource.cloneWithRows(starDataSource)
                 });
             }
         })
@@ -181,15 +198,6 @@ export default class Home extends Component {
                 Service.showToast('网络出错,请稍后再试');
             });
         }
-    }
-
-    _onChange() {
-
-    }
-
-    _getProgress(offset) {
-        var progress = this.state.progress + offset;
-        return Math.sin(progress % Math.PI) % 1;
     }
 }
 
