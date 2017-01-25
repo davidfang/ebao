@@ -67,6 +67,9 @@ module.exports = {
             getAllByUserId: 'carts',
             add: 'cart',
             update: 'cart'
+        },
+        order: {
+            add: 'order'
         }
     },
 

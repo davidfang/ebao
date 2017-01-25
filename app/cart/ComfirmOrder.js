@@ -60,7 +60,7 @@ export default class ComfirmOrder extends Component {
                             styles.padding_left_and_right]}>
                             <Text style={styles.footer_desc}>您参与{this.state.goods.length}件宝贝的争夺,合计{this.state.totalPay}元</Text>
                             <View>
-                                <Button style={styles.footer_btn} onPress={this._check.bind(this)}>提交订单</Button>
+                                <Button style={styles.footer_btn} onPress={this._submit.bind(this)}>提交订单</Button>
                             </View>
                         </View>
                         <ListView dataSource={this.state.dataSource} enableEmptySections={true}
@@ -100,7 +100,6 @@ export default class ComfirmOrder extends Component {
     }
 
     _renderItem(rowData, rowID) {
-        console.log('row', rowData);
         return (
             <View style={styles.item}>
                 <TouchableHighlight style={styles.item_info} underlayColor="#fff">
@@ -148,8 +147,21 @@ export default class ComfirmOrder extends Component {
         }
     }
 
-    _check() {
-
+    _submit() {
+        AsyncStorage.getItem('user').then((userJson) => {
+            let goods = new Array();
+            for (let i = 0; i < this.state.goods.length; i++) {
+                 goods.push(this.state.goods[i]._id);
+            }
+            return request.put(config.api.host + config.api.order.add, {
+                userId: JSON.parse(userJson)._id,
+                goods: goods
+            });
+        }).then((data) => {
+            if (data && data.status) {
+                Service.showToast('订单提交成功,请等待后续处理');
+            }
+        })
     }
 }
 
