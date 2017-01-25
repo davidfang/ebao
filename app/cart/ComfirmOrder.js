@@ -12,6 +12,7 @@ export default class ComfirmOrder extends Component {
         super(props);
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
+            defaultAddress: {},
             dataSource: ds.cloneWithRows([])
         };
     }
@@ -32,15 +33,15 @@ export default class ComfirmOrder extends Component {
                         <View style={styles.info_detail}>
                             <View style={styles.info_item}>
                                 <Text style={styles.info_text}>收货人:</Text>
-                                <Text style={[styles.info_text, styles.info_item_space]}>张三</Text>
+                                <Text style={[styles.info_text, styles.info_item_space]}>{this.state.defaultAddress.name}</Text>
                             </View>
                             <View style={styles.info_item}>
                                 <Text style={styles.info_text}>手机号:</Text>
-                                <Text style={[styles.info_text, styles.info_item_space]}>13811223344</Text>
+                                <Text style={[styles.info_text, styles.info_item_space]}>{this.state.defaultAddress.telephone}</Text>
                             </View>
                             <View style={styles.info_item}>
                                 <Text style={styles.info_text}>收货地址:</Text>
-                                <Text style={[styles.info_text, styles.info_item_space]} numberOfLines={2}>上海市杨浦区创智天地3号楼3楼 近五角场</Text>
+                                <Text style={[styles.info_text, styles.info_item_space]} numberOfLines={2}>{this.state.defaultAddress.address}</Text>
                             </View>
                         </View>
                         <View style={styles.info_addresses}>
@@ -67,7 +68,28 @@ export default class ComfirmOrder extends Component {
     }
 
     componentDidMount() {
+        let me = this;
+        AsyncStorage.getItem('user').then((userJson) => {
+            let user = JSON.parse(userJson);
+            return request.get(config.api.host + config.api.user.getUser, {
+                _id: user._id
+            }).then((data) => {
+                if (data && data.status) {
+                    let defaultAddress = {};
+                    let addresses = data.result.addresses;
+                    for (let i in addresses) {
+                        if (addresses[i].isDefault) {
+                            defaultAddress = addresses[i];
+                            break;
+                        }
+                    }
 
+                    me.setState({
+                        defaultAddress: defaultAddress
+                    });
+                }
+            })
+        })
     }
 
     _renderItem(rowData, rowID) {
