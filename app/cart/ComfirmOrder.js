@@ -1,7 +1,8 @@
-import {View, Text, Image, TouchableOpacity, TouchableHighlight, ListView, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, Image, TouchableOpacity, TouchableHighlight, ListView, StyleSheet, Dimensions, AsyncStorage} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
+import AddressList from '../account/AddressList';
 import request from '../common/request';
 import config from '../common/config';
 import Service from '../common/service';
@@ -26,20 +27,26 @@ export default class ComfirmOrder extends Component {
                     <Text style={styles.header_title}>确认订单</Text>
                 </View>
                 <View style={styles.body}>
-                    <View style={[styles.info, styles.backgound_white, styles.border_bottom, styles.padding_left_and_right]}>
-                        <View style={styles.info_item}>
-                            <Text style={styles.info_text}>收货人:</Text>
-                            <Text style={[styles.info_text, styles.info_item_space]}>张三</Text>
+                    <TouchableOpacity style={[styles.info, styles.backgound_white, styles.border_bottom, styles.padding_left_and_right]}
+                                      onPress={this._gotoView.bind(this)}>
+                        <View style={styles.info_detail}>
+                            <View style={styles.info_item}>
+                                <Text style={styles.info_text}>收货人:</Text>
+                                <Text style={[styles.info_text, styles.info_item_space]}>张三</Text>
+                            </View>
+                            <View style={styles.info_item}>
+                                <Text style={styles.info_text}>手机号:</Text>
+                                <Text style={[styles.info_text, styles.info_item_space]}>13811223344</Text>
+                            </View>
+                            <View style={styles.info_item}>
+                                <Text style={styles.info_text}>收货地址:</Text>
+                                <Text style={[styles.info_text, styles.info_item_space]} numberOfLines={2}>上海市杨浦区创智天地3号楼3楼 近五角场</Text>
+                            </View>
                         </View>
-                        <View style={styles.info_item}>
-                            <Text style={styles.info_text}>手机号:</Text>
-                            <Text style={[styles.info_text, styles.info_item_space]}>13811223344</Text>
+                        <View style={styles.info_addresses}>
+                            <Icon style={styles.back_icon} name="ios-arrow-forward"/>
                         </View>
-                        <View style={styles.info_item}>
-                            <Text style={styles.info_text}>收货地址:</Text>
-                            <Text style={[styles.info_text, styles.info_item_space]} numberOfLines={2}>上海市杨浦区创智天地3号楼3楼 近五角场</Text>
-                        </View>
-                    </View>
+                    </TouchableOpacity>
                     <View style={[styles.list, styles.backgound_white, styles.margin_top, styles.border_top]}>
                         <View style={[styles.footer, styles.backgound_white, styles.border_bottom,
                             styles.padding_left_and_right]}>
@@ -84,6 +91,30 @@ export default class ComfirmOrder extends Component {
 
         if (navigator) {
             navigator.pop();
+        }
+    }
+
+    _gotoView() {
+        const {navigator} = this.props;
+
+        if (navigator) {
+            if (navigator) {
+                AsyncStorage.getItem('user').then((userJson) => {
+                    return request.get(config.api.host + config.api.user.getUser, {
+                        _id: JSON.parse(userJson)._id
+                    });
+                }).then((data) => {
+                    if (data && data.status) {
+                        navigator.push({
+                            name: 'addressList',
+                            component: AddressList,
+                            params: {
+                                addresses: data.result.addresses
+                            }
+                        });
+                    }
+                })
+            }
         }
     }
 
@@ -154,7 +185,16 @@ const styles = StyleSheet.create({
     },
     info: {
         paddingTop: 10,
-        paddingBottom: 10
+        paddingBottom: 10,
+        flexDirection: 'row'
+    },
+    info_detail: {
+        flex: 1
+    },
+    info_addresses: {
+        width: 20,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     info_item: {
         marginTop: 5,

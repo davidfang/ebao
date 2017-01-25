@@ -262,13 +262,15 @@ export default class MyDetail extends Component {
                     _id: JSON.parse(userJson)._id
                 });
             }).then((data) => {
-                navigator.push({
-                    name: 'addressList',
-                    component: AddressList,
-                    params: {
-                        addresses: data.result.addresses
-                    }
-                });
+                if (data && data.status) {
+                    navigator.push({
+                        name: 'addressList',
+                        component: AddressList,
+                        params: {
+                            addresses: data.result.addresses
+                        }
+                    });
+                }
             })
         }
     }
