@@ -12,9 +12,15 @@ export default class ComfirmOrder extends Component {
     constructor(props) {
         super(props);
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        let totalPay = 0;
+        for (let i = 0; i < this.props.goods.length; i++) {
+            totalPay += Number.parseInt(this.props.goods[i].count);
+        }
         this.state = {
             defaultAddress: {},
-            dataSource: ds.cloneWithRows([])
+            goods: this.props.goods,
+            totalPay: totalPay,
+            dataSource: ds.cloneWithRows(this.props.goods)
         };
     }
 
@@ -52,7 +58,7 @@ export default class ComfirmOrder extends Component {
                     <View style={[styles.list, styles.backgound_white, styles.margin_top, styles.border_top]}>
                         <View style={[styles.footer, styles.backgound_white, styles.border_bottom,
                             styles.padding_left_and_right]}>
-                            <Text style={styles.footer_desc}>共3件宝贝,合计56元(含运费6元)</Text>
+                            <Text style={styles.footer_desc}>您参与{this.state.goods.length}件宝贝的争夺,合计{this.state.totalPay}元</Text>
                             <View>
                                 <Button style={styles.footer_btn} onPress={this._check.bind(this)}>提交订单</Button>
                             </View>
@@ -94,6 +100,7 @@ export default class ComfirmOrder extends Component {
     }
 
     _renderItem(rowData, rowID) {
+        console.log('row', rowData);
         return (
             <View style={styles.item}>
                 <TouchableHighlight style={styles.item_info} underlayColor="#fff">
@@ -101,9 +108,9 @@ export default class ComfirmOrder extends Component {
                 </TouchableHighlight>
                 <View style={styles.item_part}>
                     <View style={styles.item_desc}>
-                        <Text style={styles.item_desc_text} numberOfLines={2}>{rowData.desc}</Text>
+                        <Text style={styles.item_desc_text} numberOfLines={2}>{rowData.goodId.desc}</Text>
                     </View>
-                    <Text style={styles.item_part_number}>参与1份</Text>
+                    <Text style={styles.item_part_number}>参与{rowData.count}份</Text>
                 </View>
             </View>
         );
@@ -270,6 +277,9 @@ const styles = StyleSheet.create({
         color: '#666',
         fontSize: 15,
         marginTop: 10
+    },
+    list: {
+        flex: 1,
     },
     footer: {
         width: width,

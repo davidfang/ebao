@@ -15,6 +15,7 @@ export default class Cart extends Component {
         super(props);
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
+            data: [],
             dataSource: ds.cloneWithRows([]),
             goodCount: null,
             totalPay: 0,
@@ -121,6 +122,7 @@ export default class Cart extends Component {
                     totalPay += parseInt(data.result[i].count);
                 }
                 me.setState({
+                    data: data.result,
                     dataSource: me.state.dataSource.cloneWithRows(data.result),
                     goodCount: data.result.length,
                     totalPay: totalPay,
@@ -128,6 +130,7 @@ export default class Cart extends Component {
                 });
             } else if (data && !data.status && data.result == null){
                 me.setState({
+                    data: [],
                     dataSource: me.state.dataSource.cloneWithRows([]),
                     goodCount: 0
                 });
@@ -157,6 +160,9 @@ export default class Cart extends Component {
                 }
             } else if (name === 'confirmOrder') {
                 message.component = ConfrimOrder;
+                message.params = {
+                    goods: this.state.data
+                }
             }
 
             navigator.push(message);
