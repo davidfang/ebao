@@ -52,6 +52,7 @@ module.exports = {
             publish: 'good'
         },
         address: {
+            getByUserId: 'addresses',
             add: 'address',
             update: 'address'
         },

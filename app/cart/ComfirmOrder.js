@@ -1,4 +1,5 @@
-import {View, Text, Image, TouchableOpacity, TouchableHighlight, ListView, StyleSheet, Dimensions, AsyncStorage} from 'react-native';
+import {View, Text, Image, TouchableOpacity, TouchableHighlight, ListView, StyleSheet, Dimensions,
+    AsyncStorage} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
@@ -122,8 +123,8 @@ export default class ComfirmOrder extends Component {
         if (navigator) {
             if (navigator) {
                 AsyncStorage.getItem('user').then((userJson) => {
-                    return request.get(config.api.host + config.api.user.getUser, {
-                        _id: JSON.parse(userJson)._id
+                    return request.get(config.api.host + config.api.address.getByUserId, {
+                        userId: JSON.parse(userJson)._id
                     });
                 }).then((data) => {
                     if (data && data.status) {
@@ -131,7 +132,7 @@ export default class ComfirmOrder extends Component {
                             name: 'addressList',
                             component: AddressList,
                             params: {
-                                addresses: data.result.addresses
+                                addresses: data.result
                             }
                         });
                     }
