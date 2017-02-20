@@ -357,9 +357,11 @@ export default class Detail extends Component {
                     }).catch((error) => {
                         me.setState({
                             isSending: false,
+                            content: '',
                             commentModalVisible: false
+                        }, function () {
+                            AlertIOS.alert('留言失败,请稍后重试!');
                         });
-                        AlertIOS.alert('留言失败,请稍后重试!');
                     });
                 }
             })
