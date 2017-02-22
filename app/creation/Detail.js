@@ -14,9 +14,9 @@ export default class Detail extends Component {
     constructor(props) {
         super(props);
         let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-
         let isUp = false;
         let comments = this.props.data.info.good.comments;
+        
         if (comments && comments.length) {
             for (let i = 0; i < comments.length; i++) {
                 if (comments[i].commentator == this.props.userId) {
