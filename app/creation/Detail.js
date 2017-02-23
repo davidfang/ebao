@@ -107,6 +107,7 @@ export default class Detail extends Component {
 
     componentDidMount() {
         let me = this;
+        
         this._fetchData();
         PubSub.subscribe('update_comments', function () {
             me._fetchData();
