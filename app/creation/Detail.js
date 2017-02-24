@@ -107,7 +107,7 @@ export default class Detail extends Component {
 
     componentDidMount() {
         let me = this;
-        
+
         this._fetchData();
         PubSub.subscribe('update_comments', function () {
             me._fetchData();
@@ -193,6 +193,7 @@ export default class Detail extends Component {
 
     _fetchData() {
         let me = this;
+        
         request.get(config.api.host + config.api.comment.getAllByGoodId, {
             goodId: me.state.data.info.good._id
         }).then((data) => {
