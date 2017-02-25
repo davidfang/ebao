@@ -193,7 +193,7 @@ export default class Detail extends Component {
 
     _fetchData() {
         let me = this;
-        
+
         request.get(config.api.host + config.api.comment.getAllByGoodId, {
             goodId: me.state.data.info.good._id
         }).then((data) => {
@@ -263,6 +263,7 @@ export default class Detail extends Component {
     _up() {
         let me = this;
         let user = null;
+        
         this.setState({
             isUp: !this.state.isUp
         }, function () {
