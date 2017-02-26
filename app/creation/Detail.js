@@ -263,7 +263,7 @@ export default class Detail extends Component {
     _up() {
         let me = this;
         let user = null;
-        
+
         this.setState({
             isUp: !this.state.isUp
         }, function () {
@@ -373,6 +373,7 @@ export default class Detail extends Component {
 
     _getProgress(offset) {
         var progress = this.state.progress + offset;
+        
         return Math.sin(progress % Math.PI) % 1;
     }
 }
