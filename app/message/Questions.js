@@ -76,6 +76,7 @@ export default class Questions extends Component {
 
     _goBack() {
         const {navigator} = this.props;
+        
         if (navigator) {
             navigator.pop();
         }
