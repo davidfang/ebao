@@ -43,12 +43,12 @@ export default class ebao extends Component {
                         }
                     }}
                     configureScene={(route) => {
-                            return Navigator.SceneConfigs.FloatFromRight;
-                        }}
+                        return Navigator.SceneConfigs.FloatFromRight;
+                    }}
                     renderScene={(route, navigator) => {
-                            let Component = route.component;
-                            return <Component {...route.params} navigator={navigator} />;
-                        }}
+                        let Component = route.component;
+                        return <Component {...route.params} navigator={navigator} />;
+                    }}
                 />
             );
         }
